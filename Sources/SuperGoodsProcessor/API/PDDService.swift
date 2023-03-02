@@ -146,10 +146,16 @@ extension PDDService {
             return allGoods
         }
 
-        for page in 2...pageCount {
-            let (newGoods, newListId) = try await fetchGoods(listId: listId, catId: catId, optId: optId, page: page, pageSize: pageSize)
-            allGoods.append(contentsOf: newGoods)
-            listId = newListId
+        // fetch the rest of the pages, if any
+        // Here we use a do-catch block to catch any errors that occur while fetching the goods, to avoid data loss.
+        do {
+            for page in 2...pageCount {
+                let (newGoods, newListId) = try await fetchGoods(listId: listId, catId: catId, optId: optId, page: page, pageSize: pageSize)
+                allGoods.append(contentsOf: newGoods)
+                listId = newListId
+            }
+        } catch {
+            print(error)
         }
 
         return allGoods
