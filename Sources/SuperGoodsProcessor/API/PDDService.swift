@@ -24,7 +24,54 @@ public final class PDDService {
     private let config = Configuration.shared
 
     private let baseURL = URL(string: "https://gw-api.pinduoduo.com/api/router")!
+}
 
+extension PDDService {
+    /// Make a request to the API
+    /// - Parameters:
+    ///   - type: the type of request.
+    ///   - contents: a function that returns an array of URL Query Items
+    /// - Returns: a URLRequest
+    private func makeAPIRequest(type: String, @URLQueryBuilder _ contents: () -> [URLQueryItem]) -> URLRequest {
+        let queryItems = Self.sharedQueryItems(for: type) + contents()
+        let signedQuery = Self.addSign(to: queryItems)
+        return URLRequest(url: baseURL.appending(queryItems: signedQuery))
+    }
+
+    /// Returns the query items for a request to the API.
+    ///
+    /// - Parameters:
+    ///   - type: The type of request.
+    ///
+    /// - Returns: The query items for the request.
+    @URLQueryBuilder
+    private static func sharedQueryItems(for type: String) -> [URLQueryItem] {
+        URLQueryItem(key: "type", value: type)
+        URLQueryItem(key: "client_id", value: Configuration.shared.clientID)
+        URLQueryItem(key: "timestamp", value: Int(Date.now.timeIntervalSince1970))
+    }
+
+    /// A helper function for adding a sign to a query string
+    private static func addSign(to queryItems: [URLQueryItem]) -> [URLQueryItem] {
+        func makeSign(_ queryItems: [URLQueryItem]) -> String {
+            let parameterStr = queryItems.sorted { itemA, itemB in
+                itemA.name < itemB.name
+            }.reduce("") { partialResult, item in
+                partialResult + item.name + (item.value ?? "")
+            }
+
+            return MD5("\(Configuration.shared.clientSecret)\(parameterStr)\(Configuration.shared.clientSecret)").uppercased()
+        }
+
+        // Make the sign
+        let sign = makeSign(queryItems)
+        return queryItems + [URLQueryItem(name: "sign", value: sign)]
+    }
+}
+
+// MARK: - Goods API
+
+extension PDDService {
     // This function is used to fetch a list of categories from the Pinduoduo API.
     // The `parentCatId` parameter is used to specify the parent category ID.
     public func fetchGoodsCategories(parentCatId: Int = 0) async throws -> [GoodsCategory] {
@@ -106,48 +153,5 @@ public final class PDDService {
         }
 
         return allGoods
-    }
-}
-
-extension PDDService {
-    /// Make a request to the API
-    /// - Parameters:
-    ///   - type: the type of request.
-    ///   - contents: a function that returns an array of URL Query Items
-    /// - Returns: a URLRequest
-    private func makeAPIRequest(type: String, @URLQueryBuilder _ contents: () -> [URLQueryItem]) -> URLRequest {
-        let queryItems = Self.sharedQueryItems(for: type) + contents()
-        let signedQuery = Self.addSign(to: queryItems)
-        return URLRequest(url: baseURL.appending(queryItems: signedQuery))
-    }
-
-    /// Returns the query items for a request to the API.
-    ///
-    /// - Parameters:
-    ///   - type: The type of request.
-    ///
-    /// - Returns: The query items for the request.
-    @URLQueryBuilder
-    private static func sharedQueryItems(for type: String) -> [URLQueryItem] {
-        URLQueryItem(key: "type", value: type)
-        URLQueryItem(key: "client_id", value: Configuration.shared.clientID)
-        URLQueryItem(key: "timestamp", value: Int(Date.now.timeIntervalSince1970))
-    }
-
-    /// A helper function for adding a sign to a query string
-    private static func addSign(to queryItems: [URLQueryItem]) -> [URLQueryItem] {
-        func makeSign(_ queryItems: [URLQueryItem]) -> String {
-            let parameterStr = queryItems.sorted { itemA, itemB in
-                itemA.name < itemB.name
-            }.reduce("") { partialResult, item in
-                partialResult + item.name + (item.value ?? "")
-            }
-
-            return MD5("\(Configuration.shared.clientSecret)\(parameterStr)\(Configuration.shared.clientSecret)").uppercased()
-        }
-
-        // Make the sign
-        let sign = makeSign(queryItems)
-        return queryItems + [URLQueryItem(name: "sign", value: sign)]
     }
 }
