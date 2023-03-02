@@ -1,0 +1,42 @@
+# By default, SwiftLint uses a set of sensible default rules you can adjust:
+disabled_rules: # rule identifiers turned on by default to exclude from running
+  - colon
+  - inclusive_language
+  - todo
+  - trailing_comma
+opt_in_rules: # some rules are turned off by default, so you need to opt-in
+  - closure_spacing
+  - empty_collection_literal
+  - empty_count
+  - unused_import
+
+# Alternatively, specify all rules explicitly by uncommenting this option:
+# only_rules: # delete `disabled_rules` & `opt_in_rules` if using this
+#   - empty_parameters
+#   - vertical_whitespace
+
+included: # paths to include during linting. `--path` is ignored if present.
+  - Sources
+
+line_length: 160
+# they can set both implicitly with an array
+type_body_length:
+  - 300 # warning
+  - 400 # error
+# or they can set both explicitly
+file_length:
+  warning: 500
+  error: 1200
+
+cyclomatic_complexity:
+  warning: 20
+  error: 30
+
+identifier_name:
+  excluded: # excluded via string array
+    - id
+    - key
+    - min
+    - max
+
+reporter: "xcode"

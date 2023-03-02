@@ -1,0 +1,36 @@
+{
+  "devskim.ignoreRulesList": ["DS126858"],
+  "psi-header.lang-config": [
+    {
+      "language": "Swift",
+      "begin": "//",
+      "prefix": "//",
+      "suffix": "",
+      "lineLength": 80,
+      "end": "//",
+      "forceToTop": true
+    }
+  ],
+  "psi-header.templates": [
+    {
+      "language": "Swift",
+      "template": [
+        " <<filename>>",
+        " Super Goods Processor",
+        "",
+        " Created by <<author>> on <<filecreated('YYYY/M/DD')>>",
+        " Copyright © <<year>> <<author>>. All rights reserved."
+      ]
+    }
+  ],
+  "cSpell.words": [
+    "HTTPURL",
+    "jinbao",
+    "lgst",
+    "Pinduoduo",
+    "Qzax",
+    "Subview",
+    "swiftlint",
+    "zjdry"
+  ]
+}
