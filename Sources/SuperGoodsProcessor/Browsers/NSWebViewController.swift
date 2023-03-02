@@ -21,9 +21,6 @@
             self.view = webView
         }
 
-        let nextButton = NSButton(title: "Next", target: nil, action: #selector(goNextObjc))
-        let reloadButton = NSButton(title: "Reload", target: nil, action: #selector(reloadObjc))
-
         // swiftlint:disable:next force_cast
         public var webView: WKWebView { self.view as! WKWebView }
 
@@ -36,21 +33,7 @@
 
         public override func viewDidLoad() {
             super.viewDidLoad()
-
-            view.addSubview(nextButton)
-            view.addSubview(reloadButton)
-
-            reloadButton.translateOrigin(to: .init(x: 100, y: 0))
-
             startLoop()
-        }
-
-        @objc private func goNextObjc() {
-            self.goNext()
-        }
-
-        @objc private func reloadObjc() {
-            self.reload()
         }
     }
 
