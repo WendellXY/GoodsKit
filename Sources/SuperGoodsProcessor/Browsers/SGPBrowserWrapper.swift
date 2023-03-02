@@ -83,13 +83,13 @@ extension SGPBrowserWrapper {
         webView.load(request)
     }
 
-    // Saves the data set to a JSON file with the name "goodsData.json"
+    // Saves the data set to a JSON file with the name "goods.data.json"
     func saveData() {
         do {
             let data = try JSONEncoder().encode(goodsDataSet)
             let docDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
 
-            try data.write(to: docDirectory.appending(component: "goodsData.json"))
+            try data.write(to: docDirectory.appending(component: "goods.data.json"))
         } catch {
             print(error)
         }
