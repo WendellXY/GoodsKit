@@ -96,7 +96,7 @@ extension PDDService {
     ///   - pageSize: The number of goods to request per page.
     ///
     /// - Returns: A list of goods from the server.
-    public func fetchGoods(
+    private func fetchGoods(
         keywords: String? = nil, listId: String? = nil,
         catId: Int? = nil, optId: Int? = nil,
         page: Int = 1, pageSize: Int = 100
