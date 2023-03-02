@@ -27,7 +27,7 @@ public final class Configuration {
     public static let shared = Configuration()
 
     private init() {
-        let url = Bundle.module.url(forResource: "config", withExtension: "json")!
+        let url = Bundle.module.url(forResource: "config", withExtension: "json") ?? Bundle.main.url(forResource: "config_spg", withExtension: "json")!
         let data = try! Data(contentsOf: url)
         let rawConfiguration = try! JSONDecoder().decode(RawConfiguration.self, from: data)
         self.clientID = rawConfiguration.clientID
