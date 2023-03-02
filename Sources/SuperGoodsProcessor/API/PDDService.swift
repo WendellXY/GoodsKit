@@ -155,3 +155,30 @@ extension PDDService {
         return allGoods
     }
 }
+
+// MARK: - Promotion
+
+extension PDDService {
+    // This function generates a promotion URL for a given source URL.
+    //
+    // - Parameters:
+    //   - sourceURL: The source URL to generate a promotion URL for.
+    // - Returns: The promotion URL.
+    public func regeneratePromotionURL(sourceURL: String) async throws -> PromotionURL {
+        // create request
+        let request = makeAPIRequest(type: "pdd.ddk.goods.zs.unit.url.gen") {
+            // URLQueryItem(key: "custom_parameters", value: #"{"new":1}"#)
+            URLQueryItem(key: "pid", value: config.pid)
+            URLQueryItem(key: "source_url", value: sourceURL)
+        }
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        // check response
+        if let response = response as? HTTPURLResponse, response.statusCode != 200 {
+            throw APIError.httpStatusCode(response.statusCode)
+        }
+
+        return try PromotionURL.decodeFrom(data)
+    }
+}

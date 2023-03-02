@@ -20,6 +20,9 @@ struct SuperGoodsProcessorCLI: AsyncParsableCommand {
     @Flag(name: .shortAndLong, help: "Process goods details")
     var processGoodsDetails: Bool = false
 
+    @Option(name: .shortAndLong, help: "Regenerate promotion link")
+    var regeneratePromotionLink: String?
+
     func fetchGoods(optId: Int, pages: Int) async throws {
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
@@ -76,6 +79,12 @@ struct SuperGoodsProcessorCLI: AsyncParsableCommand {
 
             if processGoodsDetails {
                 try await processGoodsDetails()
+            }
+
+            if let regeneratePromotionLink {
+                let promotionURL = try await PDDService.shared.regeneratePromotionURL(sourceURL: regeneratePromotionLink)
+
+                print(promotionURL)
             }
 
         } catch {
