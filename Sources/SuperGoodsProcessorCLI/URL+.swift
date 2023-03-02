@@ -10,4 +10,6 @@ import Foundation
 
 extension URL {
     static let playgroundResourceDirectory = Self.homeDirectory.appendingPathComponent("Developer/Seller/MyPlayground.playground/Resources")
+
+    static let defaultResultSavingDirectory = Self.documentsDirectory.appendingPathComponent("SuperGoodsProcessor/")
 }
