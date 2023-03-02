@@ -15,9 +15,6 @@
 
     public class WebViewController: UIViewController, SGPBrowserWrapper {
 
-        public static var goodsKinds: [String] = []
-        public static var goodsList: [[GoodsData]] = []
-
         public override func loadView() {
             let config = WKWebViewConfiguration()
             let webView = WKWebView(frame: .zero, configuration: config)

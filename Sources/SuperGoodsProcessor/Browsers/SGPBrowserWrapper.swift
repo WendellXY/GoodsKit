@@ -9,10 +9,6 @@
 import WebKit
 
 public protocol SGPBrowserWrapper: AnyObject {
-    static var goodsKinds: [String] { get set }
-    static var goodsList: [[GoodsData]] { get set }
-    static var maxRepeatedTimes: Int { get }
-
     var webView: WKWebView { get }
 
     var goodsDataSet: Set<GoodsDetailData> { get set }
@@ -26,7 +22,17 @@ public protocol SGPBrowserWrapper: AnyObject {
 // MARK: - Basic
 
 extension SGPBrowserWrapper {
-    public static var maxRepeatedTimes: Int { 3 }
+    public static var maxRepeatedTimes: Int { SGPBrowsersConfiguration.maxRepeatedTimes }
+
+    public static var goodsKinds: [String] {
+        get { SGPBrowsersConfiguration.goodsKinds }
+        set { SGPBrowsersConfiguration.goodsKinds = newValue }
+    }
+
+    public static var goodsList: [[GoodsData]] {
+        get { SGPBrowsersConfiguration.goodsList }
+        set { SGPBrowsersConfiguration.goodsList = newValue }
+    }
 
     // The currentURL property returns the URL of the current page of the web view.
     public var currentURL: URL? {
@@ -186,7 +192,7 @@ extension SGPBrowserWrapper {
         var counter = 0
 
         guard isInComments || forceParse else {
-            while !isInComments && counter < Self.maxRepeatedTimes * 5 {
+            while !isInComments && counter < Self.maxRepeatedTimes * 3 {
                 consolePrint("Entering Comments Page, loop \(counter)")
                 counter += 1
                 do {
@@ -197,7 +203,7 @@ extension SGPBrowserWrapper {
                 }
             }
 
-            if counter == Self.maxRepeatedTimes * 5 {
+            if counter == Self.maxRepeatedTimes * 3 {
                 consolePrint("Force Parsing Web Page")
                 return try await parseFromWebView(webView, forceParse: currentURL?.absoluteString.contains("goods2.html") ?? false)
             }
