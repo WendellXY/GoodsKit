@@ -1,19 +1,17 @@
 //
-//  WebViewController.swift
+//  NSWebViewController.swift
 //  SuperGoodsProcessor
 //
-//  Created by Xinyu Wang on 2023/3/01
+//  Created by Xinyu Wang on 2023/3/02
 //  Copyright © 2023 Xinyu Wang. All rights reserved.
 //
 
-#if canImport(UIKit)
+#if os(macOS)
 
-    import Foundation
-    import UIKit
+    import AppKit
     import WebKit
-    import RegexBuilder
 
-    public class WebViewController: UIViewController, SGPBrowserWrapper {
+    public final class NSWebViewController: NSViewController, SGPBrowserWrapper {
 
         public override func loadView() {
             let config = WKWebViewConfiguration()
@@ -23,8 +21,8 @@
             self.view = webView
         }
 
-        let nextButton = UIButton(type: .infoDark)
-        let reloadButton = UIButton(type: .contactAdd)
+        let nextButton = NSButton(title: "Next", target: nil, action: #selector(goNextObjc))
+        let reloadButton = NSButton(title: "Reload", target: nil, action: #selector(reloadObjc))
 
         // swiftlint:disable:next force_cast
         public var webView: WKWebView { self.view as! WKWebView }
@@ -39,26 +37,24 @@
         public override func viewDidLoad() {
             super.viewDidLoad()
 
-            nextButton.addAction(
-                .init(handler: { _ in
-                    self.goNext()
-                }), for: .touchUpInside)
-
-            reloadButton.addAction(
-                .init(handler: { _ in
-                    self.reload()
-                }), for: .touchUpInside)
-
             view.addSubview(nextButton)
             view.addSubview(reloadButton)
 
-            reloadButton.transform = .init(translationX: 100, y: 0)
+            reloadButton.translateOrigin(to: .init(x: 100, y: 0))
 
             startLoop()
         }
+
+        @objc private func goNextObjc() {
+            self.goNext()
+        }
+
+        @objc private func reloadObjc() {
+            self.reload()
+        }
     }
 
-    extension WebViewController: WKNavigationDelegate {
+    extension NSWebViewController: WKNavigationDelegate {
         public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
             Task {
                 do {
@@ -69,4 +65,5 @@
             }
         }
     }
+
 #endif
