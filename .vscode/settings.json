@@ -24,11 +24,13 @@
     }
   ],
   "cSpell.words": [
+    "fflush",
     "HTTPURL",
     "jinbao",
     "lgst",
     "Pinduoduo",
     "Qzax",
+    "stdoutp",
     "Subview",
     "swiftlint",
     "zjdry"
