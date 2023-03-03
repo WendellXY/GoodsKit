@@ -29,7 +29,7 @@ final class PDDServiceTests: XCTestCase {
     }
 
     func testFetchGoods() async throws {
-        let goodsList = try await PDDService.shared.fetchGoodsList(keyword: "酸奶")
+        let goodsList = try await PDDService.shared.fetchGoodsList(keyword: "酸奶", pageCount: 2)
         XCTAssertFalse(goodsList.isEmpty)
 
         let goods = try await PDDService.shared.fetchGoodsList(keyword: "酸奶", pageCount: 1)
