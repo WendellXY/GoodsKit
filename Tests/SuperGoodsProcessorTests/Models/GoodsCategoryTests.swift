@@ -12,10 +12,7 @@ import XCTest
 
 final class GoodsCategoryTests: XCTestCase {
     func testGoodsCategoriesDecode() throws {
-        guard let url = Bundle.module.url(forResource: "goodsCategories", withExtension: "json") else {
-            print("errorResponse.json not found")
-            return
-        }
+        guard let url = Bundle.module.url(forResource: "goodsCategories", withExtension: "json") else { return }
 
         let data = try Data(contentsOf: url)
         let categories = try GoodsCategory.decodeCategoriesFrom(data)
@@ -24,10 +21,7 @@ final class GoodsCategoryTests: XCTestCase {
     }
 
     func testGoodsCategoryDecodeError() throws {
-        guard let url = Bundle.module.url(forResource: "errorResponse", withExtension: "json") else {
-            print("errorResponse.json not found")
-            return
-        }
+        guard let url = Bundle.module.url(forResource: "errorResponse", withExtension: "json") else { return }
 
         let data = try Data(contentsOf: url)
         XCTAssertThrowsError(try GoodsCategory.decodeCategoriesFrom(data)) { error in
@@ -45,11 +39,8 @@ final class GoodsCategoryTests: XCTestCase {
         XCTAssertThrowsError(try GoodsCategory.decodeCategoriesFrom(Data()))
     }
 
-        func testGoodsCategoriesDesc() throws {
-        guard let url = Bundle.module.url(forResource: "goodsCategories", withExtension: "json") else {
-            print("errorResponse.json not found")
-            return
-        }
+    func testGoodsCategoriesDesc() throws {
+        guard let url = Bundle.module.url(forResource: "goodsCategories", withExtension: "json") else { return }
 
         let data = try Data(contentsOf: url)
         let categories = try GoodsCategory.decodeCategoriesFrom(data)
