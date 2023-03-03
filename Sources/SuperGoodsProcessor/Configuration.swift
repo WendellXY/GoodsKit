@@ -26,8 +26,23 @@ public final class Configuration {
 
     public static let shared = Configuration()
 
-    private init() {
-        let url = Bundle.module.url(forResource: "config", withExtension: "json") ?? Bundle.main.url(forResource: "config_spg", withExtension: "json")!
+    public static let sample = {
+        let url = Bundle.module.url(forResource: "config.sample", withExtension: "json")!
+        return Configuration(configURL: url)
+    }()
+
+    public static let defaultConfigURL = {
+        if let url = Bundle.module.url(forResource: "config", withExtension: "json") {
+            return url
+        } else if let url = Bundle.main.url(forResource: "config_spg", withExtension: "json") {
+            return url
+        } else {
+            return .documentsDirectory.appendingPathComponent("SuperGoodsProcessor/config.json")
+        }
+    }()
+
+    public init(configURL: URL = Configuration.defaultConfigURL) {
+        let url = configURL
         let data = try! Data(contentsOf: url)
         let rawConfiguration = try! JSONDecoder().decode(RawConfiguration.self, from: data)
         self.clientID = rawConfiguration.clientID

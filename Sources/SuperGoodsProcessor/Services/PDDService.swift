@@ -21,9 +21,9 @@ public final class PDDService {
 
     public var session: URLSession = .shared
 
-    private init() {}
+    public var config = Configuration.shared
 
-    private let config = Configuration.shared
+    private init() {}
 
     private let baseURL = URL(string: "https://gw-api.pinduoduo.com/api/router")!
 }
