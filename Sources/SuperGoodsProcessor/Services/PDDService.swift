@@ -91,6 +91,32 @@ extension PDDService {
     }
 }
 
+// MARK: - Authority API
+
+extension PDDService {
+
+    private struct PidAuthorityResponse: Decodable {
+        let bind: Int
+        let requestId: String?
+    }
+
+    /// This function is used in the Pinduoduo API class and is used to check if a pid is authorized.
+    public func isPidAuthorized() async throws -> Bool {
+        let request = makeAPIRequest(type: "pdd.ddk.member.authority.query") {
+            URLQueryItem(key: "pid", value: config.pid)
+        }
+
+        let data = try await performHTTPRequest(request)
+
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+
+        let response = try decoder.decodeFirstProperty(PidAuthorityResponse.self, from: data)
+
+        return response.bind == 1
+    }
+}
+
 // MARK: - Goods API
 
 extension PDDService {

@@ -48,4 +48,12 @@ final class PDDServiceTests: XCTestCase {
         XCTAssert(promotionURL.shortUrl?.isEmpty == false)
         XCTAssert(promotionURL.url?.isEmpty == false)
     }
+
+    func testPidAuthority() async throws {
+        do {
+            let _ = try await PDDService.shared.isPidAuthorized()
+        } catch {
+            XCTFail()
+        }
+    }
 }
