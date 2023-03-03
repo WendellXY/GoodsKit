@@ -9,26 +9,18 @@
 
 import Foundation
 
-private struct RawConfiguration: Codable {
-    let clientID: String
-    let clientSecret: String
-    let pid: String
-    let accessToken: String
-    let refreshToken: String
-}
-
-public final class Configuration {
+public final class Configuration: Codable {
     public let clientID: String
     public let clientSecret: String
     public let pid: String
     public let accessToken: String
     public let refreshToken: String
 
-    public static let shared = Configuration()
+    public static let shared = load()
 
     public static let sample = {
         let url = Bundle.module.url(forResource: "config.sample", withExtension: "json")!
-        return Configuration(configURL: url)
+        return load(from: url)
     }()
 
     public static let defaultConfigURL = {
@@ -41,14 +33,9 @@ public final class Configuration {
         }
     }()
 
-    public init(configURL: URL = Configuration.defaultConfigURL) {
-        let url = configURL
+    public static func load(from url: URL = defaultConfigURL) -> Configuration {
         let data = try! Data(contentsOf: url)
-        let rawConfiguration = try! JSONDecoder().decode(RawConfiguration.self, from: data)
-        self.clientID = rawConfiguration.clientID
-        self.clientSecret = rawConfiguration.clientSecret
-        self.pid = rawConfiguration.pid
-        self.accessToken = rawConfiguration.accessToken
-        self.refreshToken = rawConfiguration.refreshToken
+        let configuration = try! JSONDecoder().decode(Configuration.self, from: data)
+        return configuration
     }
 }
