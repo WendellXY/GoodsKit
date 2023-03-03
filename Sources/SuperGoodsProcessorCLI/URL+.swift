@@ -11,5 +11,6 @@ import Foundation
 extension URL {
     static let playgroundResourceDirectory = Self.homeDirectory.appendingPathComponent("Developer/Seller/MyPlayground.playground/Resources")
 
+    /// The directory where the results are saved, which is also where the configuration file is located.
     static let defaultResultSavingDirectory = Self.documentsDirectory.appendingPathComponent("SuperGoodsProcessor/")
 }
