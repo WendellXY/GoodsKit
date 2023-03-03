@@ -113,8 +113,6 @@ extension PDDService {
             URLQueryItem(key: "list_id", value: listId)
         }
 
-        print(request.url!.absoluteString)
-
         let (data, response) = try await URLSession.shared.data(for: request)
 
         if let response = response as? HTTPURLResponse, response.statusCode != 200 {
@@ -140,22 +138,34 @@ extension PDDService {
         keyword: String? = nil, catId: Int? = nil, optId: Int? = nil,
         pageCount: Int = 10, pageSize: Int = 100
     ) async throws -> [Goods] {
-        var (allGoods, listId) = try await fetchGoods(keywords: keyword, catId: catId, optId: optId, page: 1, pageSize: pageSize)
 
+        func printProgress(_ page: Int) {
+            print("\r[\(page)/\(pageCount)]: Fetching Goods List", terminator: "")
+            fflush(__stdoutp)
+        }
+
+        let startTime = Date.now
+
+        printProgress(0)
+
+        defer {
+            print(String(format: "\nFetch Completed! (%.2fs)", startTime.distance(to: Date.now)))
+        }
+
+        var (allGoods, listId) = try await fetchGoods(keywords: keyword, catId: catId, optId: optId, page: 1, pageSize: pageSize)
+        printProgress(1)
         if pageCount == 1 {
             return allGoods
         }
 
         // fetch the rest of the pages, if any
         // Here we use a do-catch block to catch any errors that occur while fetching the goods, to avoid data loss.
-        do {
-            for page in 2...pageCount {
-                let (newGoods, newListId) = try await fetchGoods(listId: listId, catId: catId, optId: optId, page: page, pageSize: pageSize)
-                allGoods.append(contentsOf: newGoods)
-                listId = newListId
-            }
-        } catch {
-            print(error)
+        for page in 2...pageCount {
+            guard let (newGoods, newListId) = try? await fetchGoods(listId: listId, catId: catId, optId: optId, page: page, pageSize: pageSize) else { break }
+            printProgress(page)
+
+            allGoods.append(contentsOf: newGoods)
+            listId = newListId
         }
 
         return allGoods
