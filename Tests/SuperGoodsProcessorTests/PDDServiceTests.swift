@@ -11,6 +11,13 @@ import XCTest
 @testable import SuperGoodsProcessor
 
 final class PDDServiceTests: XCTestCase {
+
+    func testHTTPRequest() async throws {
+        let request = URLRequest(url: URL(string: "https://www.apple.com")!)
+        let data = try await PDDService.shared.performHTTPRequest(request)
+        XCTAssertFalse(data.isEmpty)
+    }
+
     func testFetchGoodsCategories() async throws {
         let categories = try await PDDService.shared.fetchGoodsCategories()
         XCTAssertFalse(categories.isEmpty)

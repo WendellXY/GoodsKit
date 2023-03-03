@@ -7,6 +7,8 @@
 //
 
 public enum APIError: Error {
+    case unauthorized
+    case notFound
     case httpStatusCode(Int)
     case errorResponse(ErrorResponse)
 }

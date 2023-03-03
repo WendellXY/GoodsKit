@@ -19,6 +19,8 @@ public final class PDDService {
     /// The shared instance of the PDDService.
     public static let shared = PDDService()
 
+    public var session: URLSession = .shared
+
     private init() {}
 
     private let config = Configuration.shared
@@ -27,6 +29,26 @@ public final class PDDService {
 }
 
 extension PDDService {
+
+    /// Downloads data from the given URL
+    /// Returns the data if the download succeeds, otherwise throws an error
+    public func performHTTPRequest(_ request: URLRequest) async throws -> Data {
+        let (data, response) = try await session.data(for: request)
+
+        // Check for HTTP errors
+        if let response = response as? HTTPURLResponse {
+            switch response.statusCode {
+            case 200: break
+            case 401: throw APIError.unauthorized
+            case 404: throw APIError.notFound
+            default: throw APIError.httpStatusCode(response.statusCode)
+            }
+        }
+
+        // Return the data
+        return data
+    }
+
     /// Make a request to the API
     /// - Parameters:
     ///   - type: the type of request.
@@ -78,7 +100,9 @@ extension PDDService {
         let request = makeAPIRequest(type: "pdd.goods.cats.get") {
             URLQueryItem(key: "parent_cat_id", value: parentCatId)
         }
-        let (data, _) = try await URLSession.shared.data(for: request)
+
+        let data = try await performHTTPRequest(request)
+
         return try GoodsCategory.decodeCategoriesFrom(data)
     }
 
@@ -86,7 +110,9 @@ extension PDDService {
         let request = makeAPIRequest(type: "pdd.goods.opt.get") {
             URLQueryItem(key: "parent_opt_id", value: parentOptId)
         }
-        let (data, _) = try await URLSession.shared.data(for: request)
+
+        let data = try await performHTTPRequest(request)
+
         return try GoodsOpt.decodeOptsFrom(data)
     }
 
@@ -121,11 +147,7 @@ extension PDDService {
             URLQueryItem(key: "list_id", value: listId)
         }
 
-        let (data, response) = try await URLSession.shared.data(for: request)
-
-        if let response = response as? HTTPURLResponse, response.statusCode != 200 {
-            throw APIError.httpStatusCode(response.statusCode)
-        }
+        let data = try await performHTTPRequest(request)
 
         return try Goods.decodeGoodsFrom(data)
     }
@@ -191,17 +213,11 @@ extension PDDService {
     public func regeneratePromotionURL(sourceURL: String) async throws -> PromotionURL {
         // create request
         let request = makeAPIRequest(type: "pdd.ddk.goods.zs.unit.url.gen") {
-            // URLQueryItem(key: "custom_parameters", value: #"{"new":1}"#)
             URLQueryItem(key: "pid", value: config.pid)
             URLQueryItem(key: "source_url", value: sourceURL)
         }
 
-        let (data, response) = try await URLSession.shared.data(for: request)
-
-        // check response
-        if let response = response as? HTTPURLResponse, response.statusCode != 200 {
-            throw APIError.httpStatusCode(response.statusCode)
-        }
+        let data = try await performHTTPRequest(request)
 
         return try PromotionURL.decodeFrom(data)
     }
