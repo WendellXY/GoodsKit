@@ -140,7 +140,7 @@ extension PDDService {
     ) async throws -> [Goods] {
 
         func printProgress(_ page: Int) {
-            print("\r[\(page)/\(pageCount)]: Fetching Goods List", terminator: "")
+            print("\r[\(page)/\(pageCount)] Fetching Goods List", terminator: "")
             fflush(__stdoutp)
         }
 
