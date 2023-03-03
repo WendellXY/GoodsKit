@@ -1,0 +1,13 @@
+{
+    "goods_opt_get_response": {
+        "goods_opt_list": [
+            {
+                "opt_name": "男装",
+                "level": 1,
+                "opt_id": 239,
+                "parent_opt_id": 0
+            }
+        ],
+        "request_id": "16778141394141835"
+    }
+}

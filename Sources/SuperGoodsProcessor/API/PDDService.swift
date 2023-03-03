@@ -82,6 +82,14 @@ extension PDDService {
         return try GoodsCategory.decodeCategoriesFrom(data)
     }
 
+    public func fetchGoodsOpt(parentOptId: Int = 0) async throws -> [GoodsOpt] {
+        let request = makeAPIRequest(type: "pdd.goods.opt.get") {
+            URLQueryItem(key: "parent_opt_id", value: parentOptId)
+        }
+        let (data, _) = try await URLSession.shared.data(for: request)
+        return try GoodsOpt.decodeOptsFrom(data)
+    }
+
     /// Fetches a list of goods from the server.
     ///
     /// The list can be filtered by keyword, category, and/or option. The list is paginated. This method requests a single page of the list from the server. If
