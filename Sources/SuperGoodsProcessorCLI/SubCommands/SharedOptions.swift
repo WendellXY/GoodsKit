@@ -30,4 +30,10 @@ struct SharedOptions: ParsableArguments {
 
         return URL(filePath: savingDirectoryPath, directoryHint: .isDirectory)
     }
+
+    // Creates a directory at the specified URL if one does not already exist.
+    // Throws an error if the directory cannot be created.
+    func initialize() throws {
+        try FileManager.default.createDirectory(at: savingDirectoryURL, withIntermediateDirectories: true, attributes: nil)
+    }
 }

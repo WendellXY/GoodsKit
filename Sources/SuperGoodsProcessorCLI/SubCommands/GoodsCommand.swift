@@ -61,6 +61,8 @@ extension SuperGoodsProcessorCLI {
         }
 
         func run() async throws {
+            try options.initialize()
+
             try await fetchGoods()
         }
     }

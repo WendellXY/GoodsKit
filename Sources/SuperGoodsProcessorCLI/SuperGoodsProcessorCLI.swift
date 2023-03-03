@@ -24,8 +24,4 @@ struct SuperGoodsProcessorCLI: AsyncParsableCommand {
         ],
         defaultSubcommand: GoodsCommand.self
     )
-
-    mutating func run() async throws {
-        print(SuperGoodsProcessorCLI().text)
-    }
 }
