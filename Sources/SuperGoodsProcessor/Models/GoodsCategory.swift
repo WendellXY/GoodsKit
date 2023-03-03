@@ -28,11 +28,11 @@ public struct GoodsCategory: Codable, CustomStringConvertible {
         var categories: [GoodsCategory] = []
 
         do {
-            let result = try decoder.decode([String: RawGoodsCategoryResponse].self, from: data)
-            categories = result.values.first?.goodsCatsList.map { GoodsCategory(from: $0) } ?? []
+            let result = try decoder.decodeFirstProperty(RawGoodsCategoryResponse.self, from: data)
+            categories = result.goodsCatsList.map { GoodsCategory(from: $0) }
         } catch DecodingError.keyNotFound {
-            let result = try decoder.decode([String: ErrorResponse].self, from: data)
-            throw APIError.errorResponse(result.values.first!)
+            let result = try decoder.decodeFirstProperty(ErrorResponse.self, from: data)
+            throw APIError.errorResponse(result)
         } catch {
             throw error
         }

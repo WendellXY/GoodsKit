@@ -25,11 +25,11 @@ extension GoodsOpt {
         var opts: [GoodsOpt] = []
 
         do {
-            let result = try decoder.decode([String: RawGoodsOptResponse].self, from: data)
-            opts = result.values.first?.goodsOptList.map { GoodsOpt(from: $0) } ?? []
+            let result = try decoder.decodeFirstProperty(RawGoodsOptResponse.self, from: data)
+            opts = result.goodsOptList.map { GoodsOpt(from: $0) }
         } catch DecodingError.keyNotFound {
-            let result = try decoder.decode([String: ErrorResponse].self, from: data)
-            throw APIError.errorResponse(result.values.first!)
+            let result = try decoder.decodeFirstProperty(ErrorResponse.self, from: data)
+            throw APIError.errorResponse(result)
         } catch {
             throw error
         }

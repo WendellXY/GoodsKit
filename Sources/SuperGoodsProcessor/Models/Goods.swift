@@ -92,12 +92,10 @@ public struct Goods: Codable, CSVEncodable {
         var response: RawGoodsSearchResponse
 
         do {
-            let result = try decoder.decode([String: RawGoodsSearchResponse].self, from: data)
-            response = result.values.first!
-
+            response = try decoder.decodeFirstProperty(RawGoodsSearchResponse.self, from: data)
         } catch DecodingError.keyNotFound {
-            let result = try decoder.decode([String: ErrorResponse].self, from: data)
-            throw APIError.errorResponse(result.values.first!)
+            let result = try decoder.decodeFirstProperty(ErrorResponse.self, from: data)
+            throw APIError.errorResponse(result)
         } catch {
             throw error
         }

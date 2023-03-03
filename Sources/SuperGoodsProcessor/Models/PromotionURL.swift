@@ -30,15 +30,18 @@ public struct PromotionURL: Codable, CustomStringConvertible {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
 
+        var promotionURL: PromotionURL
+
         do {
-            let result = try decoder.decode([String: PromotionURL].self, from: data)
-            return result.values.first!
+            promotionURL = try decoder.decodeFirstProperty(PromotionURL.self, from: data)
         } catch DecodingError.keyNotFound {
-            let result = try decoder.decode([String: ErrorResponse].self, from: data)
-            throw APIError.errorResponse(result.values.first!)
+            let result = try decoder.decodeFirstProperty(ErrorResponse.self, from: data)
+            throw APIError.errorResponse(result)
         } catch {
             throw error
         }
+
+        return promotionURL
     }
 
     public var description: String {
