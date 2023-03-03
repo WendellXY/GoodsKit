@@ -47,7 +47,7 @@ public struct Goods: Codable, CSVEncodable {
     public var csvRow: String {
         let items = [
             "\(id)", "\(price)", brandName ?? "", categoryName, "\(coupon.discount)", name.replacing(",", with: " "),
-            sign, mallName, "\(promotionRate)", "\(salesAmount)"
+            sign, mallName, "\(promotionRate)", "\(salesAmount)",
         ]
 
         return items.joined(separator: ",")
@@ -89,16 +89,20 @@ public struct Goods: Codable, CSVEncodable {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
 
+        var response: RawGoodsSearchResponse
+
         do {
             let result = try decoder.decode([String: RawGoodsSearchResponse].self, from: data)
-            let response = result.values.first!
-            return (response.goodsList.map { Goods(from: $0) }, response.listId)
+            response = result.values.first!
+
         } catch DecodingError.keyNotFound {
             let result = try decoder.decode([String: ErrorResponse].self, from: data)
             throw APIError.errorResponse(result.values.first!)
         } catch {
             throw error
         }
+
+        return (response.goodsList.map { Goods(from: $0) }, response.listId)
     }
 
     public var toData: GoodsData {
