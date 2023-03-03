@@ -1,0 +1,9 @@
+{
+    "error_response": {
+        "error_msg": "公共参数错误:type",
+        "sub_msg": "",
+        "sub_code": null,
+        "error_code": 10001,
+        "request_id": "15440104776643887"
+    }
+}

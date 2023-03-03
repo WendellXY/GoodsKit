@@ -1,0 +1,13 @@
+{
+    "goods_cats_get_response": {
+        "goods_cats_list": [
+            {
+                "cat_name": "男装",
+                "level": 1,
+                "cat_id": 239,
+                "parent_cat_id": 0
+            }
+        ],
+        "request_id": "16778141394141835"
+    }
+}

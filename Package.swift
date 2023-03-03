@@ -22,7 +22,7 @@ let package = Package(
         .target(
             name: "SuperGoodsProcessor",
             dependencies: [
-                .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
+                .product(name: "AsyncAlgorithms", package: "swift-async-algorithms")
             ],
             resources: [
                 .process("Resources")
@@ -36,6 +36,9 @@ let package = Package(
             ]),
         .testTarget(
             name: "SuperGoodsProcessorTests",
-            dependencies: ["SuperGoodsProcessor"]),
+            dependencies: ["SuperGoodsProcessor"],
+            resources: [
+                .copy("Resources")
+            ]),
     ]
 )
