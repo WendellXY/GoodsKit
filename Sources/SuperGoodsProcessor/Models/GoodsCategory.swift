@@ -45,5 +45,5 @@ private struct RawGoodsCategoryResponse: Codable {
         let parentCatId: Int
     }
     let goodsCatsList: [GoodsCategory]
-    let requestId: String
+    let requestId: String?
 }
