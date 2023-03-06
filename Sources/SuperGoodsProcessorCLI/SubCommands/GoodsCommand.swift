@@ -22,19 +22,19 @@ extension SuperGoodsProcessorCLI {
 
         @OptionGroup var options: SharedOptions
 
-        @Option(name: .long, help: "Category ID of Goods to Fetch")
+        @Option(name: [.customLong("cat", withSingleDash: true)], help: "Category ID of Goods to Fetch")
         var catId: Int?
 
-        @Option(name: .long, help: "Option ID of Goods to Fetch")
+        @Option(name: [.customLong("opt", withSingleDash: true)], help: "Option ID of Goods to Fetch")
         var optId: Int?
 
-        @Option(name: .long, help: "Number of Goods Pages to Fetch")
+        @Option(name: [.short, .long], help: "Number of Goods Pages to Fetch")
         var pages: Int = 10
 
-        @Option(name: .long, help: "Number of Goods Per Page to Fetch")
+        @Option(name: [.customLong("size", withSingleDash: true), .long], help: "Number of Goods Per Page to Fetch")
         var pageSize: Int = 100
 
-        @Option(name: [.customLong("sort")], help: "Sorting Type of Goods to Fetch")
+        @Option(name: [.customLong("sort", withSingleDash: true), .long], help: "Sorting Type of Goods to Fetch")
         var sortType: Int?
 
         func fetchGoods() async throws {
