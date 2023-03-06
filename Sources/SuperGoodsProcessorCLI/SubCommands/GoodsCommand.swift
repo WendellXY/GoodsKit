@@ -20,22 +20,22 @@ extension SuperGoodsProcessorCLI {
         @Argument(help: "Keyword to Search")
         var keyword: String?
 
-        @OptionGroup var options: SharedOptions
-
-        @Option(name: [.customLong("cat", withSingleDash: true)], help: "Category ID of Goods to Fetch")
+        @Option(name: [.customLong("cat")], help: "Category ID of Goods to Fetch")
         var catId: Int?
 
-        @Option(name: [.customLong("opt", withSingleDash: true)], help: "Option ID of Goods to Fetch")
+        @Option(name: [.customLong("opt")], help: "Option ID of Goods to Fetch")
         var optId: Int?
 
         @Option(name: [.short, .long], help: "Number of Goods Pages to Fetch")
         var pages: Int = 10
 
-        @Option(name: [.customLong("size", withSingleDash: true), .long], help: "Number of Goods Per Page to Fetch")
+        @Option(name: [.customLong("size"), .long], help: "Number of Goods Per Page to Fetch")
         var pageSize: Int = 100
 
-        @Option(name: [.customLong("sort", withSingleDash: true), .long], help: "Sorting Type of Goods to Fetch")
+        @Option(name: [.customLong("sort"), .long], help: "Sorting Type of Goods to Fetch")
         var sortType: Int?
+
+        @OptionGroup var options: SharedOptions
 
         func fetchGoods() async throws {
             let encoder = JSONEncoder()
