@@ -34,6 +34,9 @@ extension SuperGoodsProcessorCLI {
         @Option(name: .long, help: "Number of Goods Per Page to Fetch")
         var pageSize: Int = 100
 
+        @Option(name: [.customLong("sort")], help: "Sorting Type of Goods to Fetch")
+        var sortType: Int?
+
         func fetchGoods() async throws {
             let encoder = JSONEncoder()
             encoder.outputFormatting = .prettyPrinted
@@ -43,7 +46,8 @@ extension SuperGoodsProcessorCLI {
                 catId: catId,
                 optId: optId,
                 pageCount: pages,
-                pageSize: pageSize
+                pageSize: pageSize,
+                sortType: sortType
             )
 
             // Raw Data
