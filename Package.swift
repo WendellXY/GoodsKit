@@ -15,15 +15,12 @@ let package = Package(
         .library(name: "SuperGoodsProcessor", targets: ["SuperGoodsProcessor"])
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-async-algorithms", branch: "main"),
-        .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.0.0"),
+        .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.0.0")
     ],
     targets: [
         .target(
             name: "SuperGoodsProcessor",
-            dependencies: [
-                .product(name: "AsyncAlgorithms", package: "swift-async-algorithms")
-            ],
+            dependencies: [],
             resources: [
                 .process("Resources")
             ]),
@@ -32,7 +29,6 @@ let package = Package(
             dependencies: [
                 "SuperGoodsProcessor",
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
-                .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
             ]),
         .testTarget(
             name: "SuperGoodsProcessorTests",
