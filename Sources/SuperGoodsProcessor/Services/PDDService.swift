@@ -145,7 +145,8 @@ extension PDDService {
     /// Fetches a list of goods from the server.
     ///
     /// The list can be filtered by keyword, category, and/or option. The list is paginated. This method requests a single page of the list from the server. If
-    /// you are request multiple pages, use ``fetchGoodsList`` instead.
+    /// you are request multiple pages, use ``fetchGoodsList`` instead. For details, check
+    ///  [Official Document](https://open.pinduoduo.com/application/document/api?id=pdd.ddk.goods.search)
     ///
     /// - Parameters:
     ///   - keywords: Keywords to filter the list by.
@@ -154,12 +155,14 @@ extension PDDService {
     ///   - optId: Option ID to filter the list by.
     ///   - page: The page number to request.
     ///   - pageSize: The number of goods to request per page.
+    ///   - sortType: The type of sorting to use.
     ///
     /// - Returns: A list of goods from the server.
     private func fetchGoods(
         keywords: String? = nil, listId: String? = nil,
         catId: Int? = nil, optId: Int? = nil,
-        page: Int = 1, pageSize: Int = 100
+        page: Int = 1, pageSize: Int = 100,
+        sortType: Int? = nil
     ) async throws -> ([Goods], String) {
 
         let request = makeAPIRequest(type: "pdd.ddk.goods.search") {
@@ -171,6 +174,7 @@ extension PDDService {
             URLQueryItem(key: "cat_id", value: catId)
             URLQueryItem(key: "opt_id", value: optId)
             URLQueryItem(key: "list_id", value: listId)
+            URLQueryItem(key: "sort_type", value: sortType)
         }
 
         let data = try await performHTTPRequest(request)
@@ -189,10 +193,13 @@ extension PDDService {
     ///   - optId: Option ID to filter the list by.
     ///   - page: The page number to request.
     ///   - pageSize: The number of goods to request per page.
+    ///   - sortType: The type of sorting to use.
+    ///
     /// - Returns: A list of goods from the server.
     public func fetchGoodsList(
         keyword: String? = nil, catId: Int? = nil, optId: Int? = nil,
-        pageCount: Int = 10, pageSize: Int = 100
+        pageCount: Int = 10, pageSize: Int = 100,
+        sortType: Int? = nil
     ) async throws -> [Goods] {
 
         func printProgress(_ page: Int) {
@@ -208,7 +215,7 @@ extension PDDService {
             print(String(format: "\nFetch Completed! (%.2fs)", startTime.distance(to: Date.now)))
         }
 
-        var (allGoods, listId) = try await fetchGoods(keywords: keyword, catId: catId, optId: optId, page: 1, pageSize: pageSize)
+        var (allGoods, listId) = try await fetchGoods(keywords: keyword, catId: catId, optId: optId, page: 1, pageSize: pageSize, sortType: sortType)
         printProgress(1)
         if pageCount == 1 {
             return allGoods
@@ -217,7 +224,10 @@ extension PDDService {
         // fetch the rest of the pages, if any
         // Here we use a do-catch block to catch any errors that occur while fetching the goods, to avoid data loss.
         for page in 2...pageCount {
-            guard let (newGoods, newListId) = try? await fetchGoods(listId: listId, catId: catId, optId: optId, page: page, pageSize: pageSize) else { break }
+            guard
+                let (newGoods, newListId) = try? await fetchGoods(
+                    listId: listId, catId: catId, optId: optId, page: page, pageSize: pageSize, sortType: sortType)
+            else { break }
             printProgress(page)
 
             allGoods.append(contentsOf: newGoods)
