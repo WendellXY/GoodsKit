@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "SuperGoodsProcessor",
+    name: "GoodsKit",
     platforms: [
         .macOS(.v13),
         .iOS(.v16),
@@ -12,27 +12,27 @@ let package = Package(
         .tvOS(.v16),
     ],
     products: [
-        .library(name: "SuperGoodsProcessor", targets: ["SuperGoodsProcessor"])
+        .library(name: "GoodsKit", targets: ["GoodsKit"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.0.0")
     ],
     targets: [
         .target(
-            name: "SuperGoodsProcessor",
+            name: "GoodsKit",
             dependencies: [],
             resources: [
                 .process("Resources")
             ]),
         .executableTarget(
-            name: "SuperGoodsProcessorCLI",
+            name: "GoodsKitCLI",
             dependencies: [
-                "SuperGoodsProcessor",
+                "GoodsKit",
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
             ]),
         .testTarget(
-            name: "SuperGoodsProcessorTests",
-            dependencies: ["SuperGoodsProcessor"],
+            name: "GoodsKitTests",
+            dependencies: ["GoodsKit"],
             resources: [
                 .copy("Resources")
             ]),

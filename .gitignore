@@ -7,5 +7,5 @@ DerivedData/
 .swiftpm/
 .netrc
 
-Sources/SuperGoodsProcessor/Resources/config.json
+Sources/GoodsKit/Resources/config.json
 Package.resolved
