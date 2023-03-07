@@ -113,7 +113,7 @@ extension SGPBrowserWrapper {
     func parseSKUList(
         from webView: WKWebView, skuList: inout [String: Double], nodeTableJS: String, skuCategoriesCount: Int
     ) async throws {
-        func parseSKU(prefix prefixStr: String) async throws {
+        func parseSKU(prefix prefixStr: String = "") async throws {
             guard let skuAmount = try await webView.evaluate("\(nodeTableJS)[\(skuCategoriesCount - 1)].length") as? Int else { return }
 
             for index in 0..<skuAmount {
@@ -125,7 +125,7 @@ extension SGPBrowserWrapper {
                 let name = [
                     prefixStr,
                     try await webView.evaluate("\(node).innerText") as? String ?? "",
-                ].joined(separator: " ")
+                ].filter(\.isEmpty.negated).joined(separator: " ")
 
                 guard let priceNode = try await webView.evaluate("document.getElementsByClassName('_27FaiT3N')[0].innerHTML") as? String,
                     let price = priceNode.firstMatch(of: moneyPattern)?.output.1
@@ -137,24 +137,23 @@ extension SGPBrowserWrapper {
             }
         }
 
-        if skuList.isEmpty {
-            consolePrint("Parsing SKUs")
-            if skuCategoriesCount > 1 {
-                // select one of the sku of the first category
-                consolePrint("Found multiple levels of SKU")
-                guard let firstCategoryLength = try await webView.evaluate("\(nodeTableJS)[0].length") as? Int else { return }
+        guard !skuList.isEmpty else { return }
 
-                for index in 0..<firstCategoryLength {
-                    consolePrint("Parsing category, loop \(index)")
-                    let node = "\(nodeTableJS)[0][\(index)]"
-                    let name = try await webView.evaluate("\(node).innerText") as? String ?? ""
-                    try await webView.evaluate("\(node).click()")
-                    try await Task.sleep(nanoseconds: 500_000_000)
-                    try await parseSKU(prefix: name)
-                }
-            } else {
-                try await parseSKU(prefix: "")
-            }
+        consolePrint("Parsing SKUs")
+
+        guard skuCategoriesCount > 0 else { return try await parseSKU() }
+
+        // select one of the sku of the first category
+        consolePrint("Found multiple levels of SKU")
+        guard let firstCategoryLength = try await webView.evaluate("\(nodeTableJS)[0].length") as? Int else { return }
+
+        for index in 0..<firstCategoryLength {
+            consolePrint("Parsing category, loop \(index)")
+            let node = "\(nodeTableJS)[0][\(index)]"
+            let name = try await webView.evaluate("\(node).innerText") as? String ?? ""
+            try await webView.evaluate("\(node).click()")
+            try await Task.sleep(nanoseconds: 500_000_000)
+            try await parseSKU(prefix: name)
         }
     }
 
@@ -178,7 +177,7 @@ extension SGPBrowserWrapper {
         } else if counter == 1, let data = html.firstMatch(of: rawDataPattern)?.output.1.data(using: .utf8) {
             consolePrint("Parsing Comments by default pattern")
             try JSONDecoder().decode([GoodsCommentsTag].self, from: data)
-                .forEach { tag in tagList.insert(tag) }
+                .forEach { tagList.insert($0) }
         } else if let tagListHTML = try? await webView.evaluate("document.getElementsByClassName('_39zjdry7')[0].innerHTML") as? String {
             consolePrint("Parsing Comments by alternative pattern")
             tagListHTML.replacing(tagPrefixPattern, with: "")
