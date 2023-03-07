@@ -20,7 +20,8 @@ extension SuperGoodsProcessorCLI {
         @Flag(name: [.short, .customLong("process-details")], help: "Process goods details")
         var processGoodsDetails: Bool = false
 
-        @OptionGroup var options: SharedOptions
+        @OptionGroup(title: "IO Options")
+         var options: SharedOptions
 
         func processGoodsDetails() async throws {
             let decoder = JSONDecoder()

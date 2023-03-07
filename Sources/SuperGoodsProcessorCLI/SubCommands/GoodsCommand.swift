@@ -35,7 +35,8 @@ extension SuperGoodsProcessorCLI {
         @Option(name: [.customLong("sort"), .long], help: "Sorting Type of Goods to Fetch")
         var sortType: Int?
 
-        @OptionGroup var options: SharedOptions
+        @OptionGroup(title: "IO Options")
+        var options: SharedOptions
 
         func fetchGoods() async throws {
             let encoder = JSONEncoder()

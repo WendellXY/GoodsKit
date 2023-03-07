@@ -19,7 +19,7 @@ struct SharedOptions: ParsableArguments {
 
     @Option(
         name: [.customLong("save")],
-        help: "Custom Saving Path, Default to ~/Documents/SuperGoodsProcessor/.")
+        help: "Custom Saving Path (default: ~/Documents/SuperGoodsProcessor/)")
     var savingDirectoryPath: String?
 
     var savingDirectoryURL: URL {
