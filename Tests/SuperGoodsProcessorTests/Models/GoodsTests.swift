@@ -15,7 +15,7 @@ final class GoodsTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
 
-        let goodsList = try await PDDService.shared.fetchGoodsList(keyword: "酸奶", pageCount: 1)
+        let goodsList = try await PDDService.shared.fetch(GoodsFetchTask(keyword: "酸奶", pageCount: 1))
         goods = goodsList.first
     }
 

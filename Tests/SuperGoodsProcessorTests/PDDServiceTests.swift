@@ -28,12 +28,23 @@ final class PDDServiceTests: XCTestCase {
         XCTAssertFalse(opts.isEmpty)
     }
 
-    func testFetchGoods() async throws {
+    @available(*, deprecated)
+    func testFetchGoodsDeprecated() async throws {
         let goodsList = try await PDDService.shared.fetchGoodsList(keyword: "酸奶", pageCount: 2, sortType: 0)
         XCTAssertFalse(goodsList.isEmpty)
 
         let goods = try await PDDService.shared.fetchGoodsList(keyword: "酸奶", pageCount: 1, sortType: 1)
         XCTAssertFalse(goods.isEmpty)
+    }
+
+    func testFetchGoods() async throws {
+        var task = GoodsFetchTask()
+        task.keyword = "酸奶"
+        task.pageCount = 2
+        task.sortType = .综合排序
+        let goods = try await PDDService.shared.fetch(task)
+        XCTAssertFalse(goods.isEmpty)
+        XCTAssertEqual(goods.count, Set(goods).count)
     }
 
     func testRegeneratePromotionURL() async throws {

@@ -52,10 +52,11 @@ extension PDDService {
     /// Make a request to the API
     /// - Parameters:
     ///   - type: the type of request.
+    ///   - queryItems: the query items for the request.
     ///   - contents: a function that returns an array of URL Query Items
     /// - Returns: a URLRequest
-    private func makeAPIRequest(type: String, @URLQueryBuilder _ contents: () -> [URLQueryItem]) -> URLRequest {
-        let queryItems = Self.sharedQueryItems(for: type) + contents()
+    private func makeAPIRequest(type: String, queryItems items: [URLQueryItem] = [], @URLQueryBuilder _ contents: () -> [URLQueryItem]) -> URLRequest {
+        let queryItems = Self.sharedQueryItems(for: type) + items + contents()
         let signedQuery = Self.addSign(to: queryItems)
         return URLRequest(url: baseURL.appending(queryItems: signedQuery))
     }
@@ -168,18 +169,61 @@ extension PDDService {
         let request = makeAPIRequest(type: "pdd.ddk.goods.search") {
             URLQueryItem(key: "custom_parameters", value: #"{"new":1}"#)
             URLQueryItem(key: "pid", value: config.pid)
-            URLQueryItem(key: "page", value: page)
-            URLQueryItem(key: "page_size", value: pageSize)
             URLQueryItem(key: "keyword", value: keywords)
             URLQueryItem(key: "cat_id", value: catId)
             URLQueryItem(key: "opt_id", value: optId)
-            URLQueryItem(key: "list_id", value: listId)
+            URLQueryItem(key: "page", value: page)
+            URLQueryItem(key: "page_size", value: pageSize)
             URLQueryItem(key: "sort_type", value: sortType)
+            URLQueryItem(key: "list_id", value: listId)
         }
 
         let data = try await performHTTPRequest(request)
 
         return try Goods.decodeGoodsFrom(data)
+    }
+
+    private func _fetch(task: GoodsFetchTask) async throws -> ([Goods], String) {
+        let request = makeAPIRequest(type: "pdd.ddk.goods.search", queryItems: task.queryItems) {
+            URLQueryItem(key: "custom_parameters", value: #"{"new":1}"#)
+            URLQueryItem(key: "pid", value: config.pid)
+        }
+
+        let data = try await performHTTPRequest(request)
+
+        return try Goods.decodeGoodsFrom(data)
+    }
+
+    public func fetch(_ task: GoodsFetchTask) async throws -> [Goods] {
+
+        func printProgress(_ page: Int) {
+            print("\r[\(page)/\(task.pageCount)] Fetching Goods List", terminator: "")
+            fflush(__stdoutp)
+        }
+
+        printProgress(0)
+        let startTime = Date.now
+
+        defer {
+            print(String(format: "\nFetch Completed! (%.2fs)", startTime.distance(to: Date.now)))
+        }
+
+        let pageCount = task.page
+
+        guard pageCount > 0 else { return [] }
+
+        var goods: [Goods] = []
+        var task = task
+
+        for pageIndex in 1...task.pageCount {
+            printProgress(pageIndex)
+            task.page = pageIndex
+            guard let (pageGoods, newListId) = try? await _fetch(task: task) else { break }
+            goods.append(contentsOf: pageGoods)
+            task.listId = newListId
+        }
+
+        return goods
     }
 
     /// Fetches multiple pages of goods from the server.
@@ -196,6 +240,7 @@ extension PDDService {
     ///   - sortType: The type of sorting to use.
     ///
     /// - Returns: A list of goods from the server.
+    @available(*, deprecated, message: "Use fetch(_:) instead")
     public func fetchGoodsList(
         keyword: String? = nil, catId: Int? = nil, optId: Int? = nil,
         pageCount: Int = 10, pageSize: Int = 100,

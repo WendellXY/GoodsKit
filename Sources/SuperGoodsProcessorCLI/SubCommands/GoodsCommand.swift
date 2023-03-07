@@ -41,14 +41,18 @@ extension SuperGoodsProcessorCLI {
             let encoder = JSONEncoder()
             encoder.outputFormatting = .prettyPrinted
 
-            let goods = try await PDDService.shared.fetchGoodsList(
-                keyword: keyword,
-                catId: catId,
-                optId: optId,
-                pageCount: pages,
-                pageSize: pageSize,
-                sortType: sortType
-            )
+            var goodsTask = GoodsFetchTask()
+            goodsTask.keyword = keyword
+            goodsTask.catId = catId
+            goodsTask.optId = optId
+            goodsTask.pageCount = pages
+            goodsTask.pageSize = pageSize
+
+            if let sortType {
+                goodsTask.sortType = GoodsFetchTask.GoodsSortType(rawValue: sortType)
+            }
+
+            let goods = try await PDDService.shared.fetch(goodsTask)
 
             // Raw Data
             let rawData = try encoder.encode(goods.map(\.toData))
