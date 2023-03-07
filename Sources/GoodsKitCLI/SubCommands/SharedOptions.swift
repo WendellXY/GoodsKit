@@ -8,6 +8,7 @@
 
 import ArgumentParser
 import Foundation
+import GoodsKit
 
 struct SharedOptions: ParsableArguments {
 
@@ -32,5 +33,7 @@ struct SharedOptions: ParsableArguments {
     // Throws an error if the directory cannot be created.
     func initialize() throws {
         try FileManager.default.createDirectory(at: savingDirectoryURL, withIntermediateDirectories: true, attributes: nil)
+
+        PDDService.shared.config = Configuration.load(from: .configFileURL, verbose: true)
     }
 }

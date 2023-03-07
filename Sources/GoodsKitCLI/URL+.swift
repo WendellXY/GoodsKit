@@ -9,6 +9,10 @@
 import Foundation
 
 extension URL {
-    /// The directory where the results are saved, which is also where the configuration file is located.
+    /// The directory where the results are saved
     static let defaultResultSavingDirectory = Self.documentsDirectory.appendingPathComponent("GoodsKit/")
+
+    static let configDirectory = defaultResultSavingDirectory.appendingPathComponent(".config/")
+
+    static let configFileURL = configDirectory.appendingPathComponent("config.json")
 }

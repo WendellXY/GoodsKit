@@ -27,15 +27,8 @@ struct GoodsKitCLI: AsyncParsableCommand {
     @Flag(name: [.customLong("init"), .short], help: "Initialize Basic Environment")
     var initialize = false
 
-    init() {
-        guard let data = try? Data(contentsOf: .defaultResultSavingDirectory.appendingPathComponent("config.json")) else { return }
-        if let config = try? JSONDecoder().decode(Configuration.self, from: data) {
-            PDDService.shared.config = config
-        }
-    }
-
     static func initializeEnvironment() throws {
-        try FileManager.default.createDirectory(at: .defaultResultSavingDirectory, withIntermediateDirectories: true, attributes: nil)
+        try FileManager.default.createDirectory(at: .configDirectory, withIntermediateDirectories: true, attributes: nil)
 
         // Create a sample configuration
         let sampleConfiguration = Configuration.sample
@@ -46,7 +39,7 @@ struct GoodsKitCLI: AsyncParsableCommand {
         let sampleConfigData = try jsonEncoder.encode(sampleConfiguration)
 
         // Save the configuration to a file
-        try sampleConfigData.write(to: .defaultResultSavingDirectory.appendingPathComponent("config.json"))
+        try sampleConfigData.write(to: .configFileURL)
     }
 
     mutating func run() async throws {

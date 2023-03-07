@@ -73,8 +73,8 @@ extension PDDService {
     /// - Returns: a URLRequest
     private func makeAPIRequest(type: String, queryItems items: [URLQueryItem] = [], @URLQueryBuilder _ contents: () -> [URLQueryItem]) -> URLRequest {
         checkConfiguration()
-        let queryItems = Self.sharedQueryItems(for: type) + items + contents()
-        let signedQuery = Self.addSign(to: queryItems)
+        let queryItems = sharedQueryItems(for: type) + items + contents()
+        let signedQuery = addSign(to: queryItems)
         return URLRequest(url: baseURL.appending(queryItems: signedQuery))
     }
 
@@ -85,14 +85,14 @@ extension PDDService {
     ///
     /// - Returns: The query items for the request.
     @URLQueryBuilder
-    private static func sharedQueryItems(for type: String) -> [URLQueryItem] {
+    private func sharedQueryItems(for type: String) -> [URLQueryItem] {
         URLQueryItem(key: "type", value: type)
-        URLQueryItem(key: "client_id", value: Configuration.shared.clientID)
+        URLQueryItem(key: "client_id", value: config.clientID)
         URLQueryItem(key: "timestamp", value: Int(Date.now.timeIntervalSince1970))
     }
 
     /// A helper function for adding a sign to a query string
-    private static func addSign(to queryItems: [URLQueryItem]) -> [URLQueryItem] {
+    private func addSign(to queryItems: [URLQueryItem]) -> [URLQueryItem] {
         func makeSign(_ queryItems: [URLQueryItem]) -> String {
             let parameterStr = queryItems.sorted { itemA, itemB in
                 itemA.name < itemB.name
@@ -100,7 +100,7 @@ extension PDDService {
                 partialResult + item.name + (item.value ?? "")
             }
 
-            return MD5("\(Configuration.shared.clientSecret)\(parameterStr)\(Configuration.shared.clientSecret)").uppercased()
+            return MD5("\(config.clientSecret)\(parameterStr)\(config.clientSecret)").uppercased()
         }
 
         // Make the sign
