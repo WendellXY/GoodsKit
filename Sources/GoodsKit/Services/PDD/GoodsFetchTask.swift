@@ -11,7 +11,7 @@ import Foundation
 public struct GoodsFetchTask {
 
     // swiftlint:disable identifier_name
-    public enum GoodsSortType: Int {
+    public enum GoodsSortType: Int, CaseIterable {
         case 综合排序 = 0
         case 按佣金比率升序 = 1
         case 按佣金比例降序 = 2
@@ -41,7 +41,38 @@ public struct GoodsFetchTask {
         case 服务评分击败同类店铺百分比降序 = 32
     }
 
+    public enum GoodsRangeType: Int, CaseIterable {
+        case 最小成团价 = 0
+        case 券后价 = 1
+        case 佣金比例 = 2
+        case 优惠券价格 = 3
+        case 广告创建时间 = 4
+        case 销量 = 5
+        case 佣金金额 = 6
+        case 店铺描述分 = 7
+        case 店铺物流分 = 8
+        case 店铺服务分 = 9
+        case 店铺描述分击败同行业百分比 = 10
+        case 店铺物流分击败同行业百分比 = 11
+        case 店铺服务分击败同行业百分比 = 12
+        case 商品分 = 13
+        case 优惠券与最小团购价之比 = 17
+        case 过去两小时pv = 18
+        case 过去两小时销量 = 19
+    }
+
     // swiftlint:enable identifier_name
+
+    // for date range, start is the timestamp of the start date, end is the timestamp of the end date
+    public struct GoodsRange {
+        let type: GoodsRangeType
+        let start: Int
+        let end: Int
+
+        var encoded: String {
+            "{\"range_id\":\(type.rawValue),\"range_from\":\(start),\"range_to\":\(end)}"
+        }
+    }
 
     // MARK: - Shared Properties
 
@@ -59,6 +90,8 @@ public struct GoodsFetchTask {
     public var useCustomized: Bool?
     /// 是否只返回优惠券的商品，false返回所有商品，true只返回有优惠券的商品
     public var withCoupon: Bool?
+    /// 筛选范围列表
+    public var rangeList: [GoodsRange]?
 
     // MARK: - Fetch Single Page Goods
     /// 默认值1，商品分页数
@@ -78,6 +111,7 @@ public struct GoodsFetchTask {
             URLQueryItem(key: "use_customized", value: useCustomized?.description),
             URLQueryItem(key: "with_coupon", value: withCoupon?.description),
             URLQueryItem(key: "list_id", value: listId),
+            URLQueryItem(key: "range_list", value: rangeList?.map(\.encoded).joined(separator: ",").surrounded(with: "[", "]")),
         ].compactMap { $0 }
     }
 
