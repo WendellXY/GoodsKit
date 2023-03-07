@@ -1,15 +1,15 @@
 //
 //  PromotionCommand.swift
-//  SuperGoodsProcessor
+//  GoodsKit
 //
 //  Created by Xinyu Wang on 2023/3/02
 //  Copyright © 2023 Xinyu Wang. All rights reserved.
 //
 
 import ArgumentParser
-import SuperGoodsProcessor
+import GoodsKit
 
-extension SuperGoodsProcessorCLI {
+extension GoodsKitCLI {
     struct PromotionCommand: AsyncParsableCommand {
         static var configuration = CommandConfiguration(
             commandName: "promotion",

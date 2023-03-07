@@ -1,6 +1,6 @@
 //
 //  GoodsDetailsCommand.swift
-//  SuperGoodsProcessor
+//  GoodsKit
 //
 //  Created by Xinyu Wang on 2023/3/02
 //  Copyright © 2023 Xinyu Wang. All rights reserved.
@@ -8,9 +8,9 @@
 
 import ArgumentParser
 import Foundation
-import SuperGoodsProcessor
+import GoodsKit
 
-extension SuperGoodsProcessorCLI {
+extension GoodsKitCLI {
     struct GoodsDetailsCommand: AsyncParsableCommand {
         static var configuration = CommandConfiguration(
             commandName: "details",
@@ -21,7 +21,7 @@ extension SuperGoodsProcessorCLI {
         var processGoodsDetails: Bool = false
 
         @OptionGroup(title: "IO Options")
-         var options: SharedOptions
+        var options: SharedOptions
 
         func processGoodsDetails() async throws {
             let decoder = JSONDecoder()

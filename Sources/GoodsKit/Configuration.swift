@@ -1,6 +1,6 @@
 //
 //  Configuration.swift
-//  SuperGoodsProcessor
+//  GoodsKit
 //
 //  Created by Xinyu Wang on 2023/2/24
 //  Copyright © 2023 Xinyu Wang. All rights reserved.
@@ -29,7 +29,7 @@ public final class Configuration: Codable {
         } else if let url = Bundle.main.url(forResource: "config_spg", withExtension: "json") {
             return url
         } else {
-            return .documentsDirectory.appendingPathComponent("SuperGoodsProcessor/config.json")
+            return .documentsDirectory.appendingPathComponent("GoodsKit/config.json")
         }
     }()
 

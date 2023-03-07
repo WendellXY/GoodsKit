@@ -1,6 +1,6 @@
 //
 //  GoodsCategoryTests.swift
-//  SuperGoodsProcessor
+//  GoodsKit
 //
 //  Created by Xinyu Wang on 2023/3/03
 //  Copyright © 2023 Xinyu Wang. All rights reserved.
@@ -8,7 +8,7 @@
 
 import XCTest
 
-@testable import SuperGoodsProcessor
+@testable import GoodsKit
 
 final class GoodsCategoryTests: XCTestCase {
     func testGoodsCategoriesDecode() throws {
