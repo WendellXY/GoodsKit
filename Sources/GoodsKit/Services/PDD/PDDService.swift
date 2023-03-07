@@ -26,9 +26,27 @@ public final class PDDService {
     private init() {}
 
     private let baseURL = URL(string: "https://gw-api.pinduoduo.com/api/router")!
+
+    private var name: String {
+        String(describing: Self.self)
+    }
 }
 
 extension PDDService {
+
+    private func checkConfiguration() {
+        guard !config.clientID.isEmpty else {
+            fatalError("\(name): clientID is not set")
+        }
+
+        guard !config.clientSecret.isEmpty else {
+            fatalError("\(name): clientSecret is not set")
+        }
+
+        guard !config.pid.isEmpty else {
+            fatalError("\(name): pid is not set")
+        }
+    }
 
     /// Downloads data from the given URL
     /// Returns the data if the download succeeds, otherwise throws an error
@@ -36,12 +54,10 @@ extension PDDService {
         let (data, response) = try await session.data(for: request)
 
         // Check for HTTP errors
-        if let response = response as? HTTPURLResponse {
-            switch response.statusCode {
-            case 200: break
-            case 401: throw APIError.unauthorized
-            case 404: throw APIError.notFound
-            default: throw APIError.httpStatusCode(response.statusCode)
+        if let response = response as? HTTPURLResponse, let status = response.status {
+            switch status.responseType {
+            case .success: break
+            default: throw status
             }
         }
 
@@ -56,6 +72,7 @@ extension PDDService {
     ///   - contents: a function that returns an array of URL Query Items
     /// - Returns: a URLRequest
     private func makeAPIRequest(type: String, queryItems items: [URLQueryItem] = [], @URLQueryBuilder _ contents: () -> [URLQueryItem]) -> URLRequest {
+        checkConfiguration()
         let queryItems = Self.sharedQueryItems(for: type) + items + contents()
         let signedQuery = Self.addSign(to: queryItems)
         return URLRequest(url: baseURL.appending(queryItems: signedQuery))
