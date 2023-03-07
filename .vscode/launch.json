@@ -3,38 +3,20 @@
     {
       "type": "lldb",
       "request": "launch",
-      "name": "Debug SuperGoodsProcessor",
-      "program": "${workspaceFolder:SuperGoodsProcessor}/.build/debug/SuperGoodsProcessor",
+      "name": "Debug GoodsKitCLI",
+      "program": "${workspaceFolder:GoodsKit}/.build/debug/GoodsKitCLI",
       "args": [],
-      "cwd": "${workspaceFolder:SuperGoodsProcessor}",
-      "preLaunchTask": "swift: Build Debug SuperGoodsProcessor"
+      "cwd": "${workspaceFolder:GoodsKit}",
+      "preLaunchTask": "swift: Build Debug GoodsKitCLI"
     },
     {
       "type": "lldb",
       "request": "launch",
-      "name": "Release SuperGoodsProcessor",
-      "program": "${workspaceFolder:SuperGoodsProcessor}/.build/release/SuperGoodsProcessor",
+      "name": "Release GoodsKitCLI",
+      "program": "${workspaceFolder:GoodsKit}/.build/release/GoodsKitCLI",
       "args": [],
-      "cwd": "${workspaceFolder:SuperGoodsProcessor}",
-      "preLaunchTask": "swift: Build Release SuperGoodsProcessor"
-    },
-    {
-      "type": "lldb",
-      "request": "launch",
-      "name": "Debug SuperGoodsProcessorCLI",
-      "program": "${workspaceFolder:SuperGoodsProcessor}/.build/debug/SuperGoodsProcessorCLI",
-      "args": [],
-      "cwd": "${workspaceFolder:SuperGoodsProcessor}",
-      "preLaunchTask": "swift: Build Debug SuperGoodsProcessorCLI"
-    },
-    {
-      "type": "lldb",
-      "request": "launch",
-      "name": "Release SuperGoodsProcessorCLI",
-      "program": "${workspaceFolder:SuperGoodsProcessor}/.build/release/SuperGoodsProcessorCLI",
-      "args": [],
-      "cwd": "${workspaceFolder:SuperGoodsProcessor}",
-      "preLaunchTask": "swift: Build Release SuperGoodsProcessorCLI"
+      "cwd": "${workspaceFolder:GoodsKit}",
+      "preLaunchTask": "swift: Build Release GoodsKitCLI"
     }
   ]
 }

@@ -24,11 +24,13 @@
     }
   ],
   "cSpell.words": [
+    "cyclomatic",
     "fflush",
     "HTTPURL",
     "jinbao",
     "lgst",
     "Pinduoduo",
+    "PROPPATCH",
     "Qzax",
     "stdoutp",
     "Subview",

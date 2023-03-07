@@ -38,5 +38,6 @@ identifier_name:
     - key
     - min
     - max
+    - ok
 
 reporter: "xcode"
