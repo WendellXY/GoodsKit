@@ -47,7 +47,7 @@ final class GoodsTests: XCTestCase {
         guard let url = Bundle.module.url(forResource: "goods", withExtension: "json") else { return }
 
         let data = try Data(contentsOf: url)
-        let goods = try Goods.decodeGoodsFrom(data)
+        let goods = try Goods.decode(responseType: .search, from: data)
 
         XCTAssertNotEqual(goods.0.count, 0)
     }
@@ -56,7 +56,7 @@ final class GoodsTests: XCTestCase {
         guard let url = Bundle.module.url(forResource: "errorResponse", withExtension: "json") else { return }
 
         let data = try Data(contentsOf: url)
-        XCTAssertThrowsError(try Goods.decodeGoodsFrom(data)) { error in
+        XCTAssertThrowsError(try Goods.decode(responseType: .search, from: data)) { error in
             guard case APIError.errorResponse(let response) = error else {
                 return XCTFail("Wrong error type")
             }
@@ -68,7 +68,7 @@ final class GoodsTests: XCTestCase {
             XCTAssert(response.requestId == "15440104776643887")
         }
 
-        XCTAssertThrowsError(try Goods.decodeGoodsFrom(Data()))
+        XCTAssertThrowsError(try Goods.decode(responseType: .search, from: Data()))
     }
 
 }

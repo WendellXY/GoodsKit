@@ -53,7 +53,7 @@ public struct Goods: Codable, CSVEncodable {
         return items.joined(separator: ",")
     }
 
-    private init(from rawData: RawGoodsSearchResponse.Goods) {
+    private init(from rawData: some RawGoods) {
         self.id = rawData.goodsId
         self.price = Double(min(rawData.minNormalPrice, rawData.minGroupPrice)) / 100
         self.brandName = rawData.brandName
@@ -85,14 +85,23 @@ public struct Goods: Codable, CSVEncodable {
         }
     }
 
-    public static func decodeGoodsFrom(_ data: Data) throws -> ([Goods], String) {
+    public static func decode(responseType type: GoodsResponseType, from data: Data) throws -> ([Goods], String) {
+        switch type {
+        case .search:
+            return try decode(RawGoodsSearchResponse.self, from: data)
+        case .recommend:
+            return try decode(RawGoodsRecommendResponse.self, from: data)
+        }
+    }
+
+    public static func decode<T: GoodsResponse>(_ type: T.Type, from data: Data) throws -> ([Goods], String) {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
 
-        var response: RawGoodsSearchResponse
+        var response: T
 
         do {
-            response = try decoder.decodeFirstProperty(RawGoodsSearchResponse.self, from: data)
+            response = try decoder.decodeFirstProperty(T.self, from: data)
         } catch DecodingError.keyNotFound {
             let result = try decoder.decodeFirstProperty(ErrorResponse.self, from: data)
             throw APIError.errorResponse(result)
@@ -108,9 +117,60 @@ public struct Goods: Codable, CSVEncodable {
     }
 }
 
-private struct RawGoodsSearchResponse: Codable {
+public enum GoodsResponseType {
+    case search
+    case recommend
+}
 
-    struct Goods: Codable {
+public protocol RawGoods: Codable {
+
+    var goodsId: Int { get }
+
+    var categoryName: String { get }
+    var catIds: [Int] { get }
+
+    var brandName: String? { get }
+
+    var goodsName: String { get }
+    var goodsSign: String { get }
+    var goodsDesc: String { get }
+
+    /// 最小拼团价（单位为分）
+    var minGroupPrice: Int { get }
+    /// 最小单买价格（单位为分）
+    var minNormalPrice: Int { get }
+
+    var hasCoupon: Bool { get }
+    var couponTotalQuantity: Int { get }
+    var couponRemainQuantity: Int { get }
+    var couponMinOrderAmount: Int { get }
+    var couponDiscount: Int { get }
+    var couponStartTime: Int { get }
+    var couponEndTime: Int { get }
+
+    var mallName: String { get }
+    /// 物流评分
+    var lgstTxt: String { get }
+    /// 服务评分
+    var servTxt: String { get }
+    /// 描述评分
+    var descTxt: String { get }
+
+    var salesTip: String { get }
+
+    var promotionRate: Int { get }
+}
+
+public protocol GoodsResponse: Codable {
+    associatedtype Goods: RawGoods
+    var goodsList: [Goods] { get }
+    var listId: String { get }
+    var searchId: String { get }
+}
+
+private struct RawGoodsSearchResponse: GoodsResponse {
+
+    struct Goods: RawGoods {
         /// 活动佣金比例，千分比（特定活动期间的佣金比例）
         let activityPromotionRate: Int?
         /// 商品活动标记数组，例：[4,7]，4-秒杀 7-百亿补贴等
@@ -248,4 +308,118 @@ private struct RawGoodsSearchResponse: Codable {
     let listId: String
     let searchId: String
     let totalCount: Int
+}
+
+private struct RawGoodsRecommendResponse: GoodsResponse {
+
+    struct Goods: RawGoods {
+
+        /// 活动佣金比例，千分比（特定活动期间的佣金比例）
+        let activityPromotionRate: Int?
+        /// 商品活动标记数组，例：[4,7]，4-秒杀 7-百亿补贴等
+        let activityTags: [Int]
+        /// 商品品牌词信息，如“苹果”、“阿迪达斯”、“李宁”等
+        let brandName: String?
+        /// 全局礼金金额，单位分
+        let cashGiftAmount: Int?
+        let categoryName: String
+        /// 商品类目id
+        let catId: String
+        /// 商品一~四级类目ID列表
+        let catIds: [Int]
+        /// 优惠券面额,单位为分
+        let couponDiscount: Int
+        /// 优惠券失效时间,UNIX时间戳
+        let couponEndTime: Int
+        /// 优惠券门槛价格,单位为分
+        let couponMinOrderAmount: Int
+        /// 优惠券金额
+        let couponPrice: Int?
+        /// 优惠券剩余数量
+        let couponRemainQuantity: Int
+        /// 优惠券生效时间,UNIX时间戳
+        let couponStartTime: Int
+        /// 优惠券总数量
+        let couponTotalQuantity: Int
+        /// 创建时间
+        let createAt: Int?
+        /// 描述分
+        let descTxt: String
+        /// 额外优惠券，单位为分
+        let extraCouponAmount: Int?
+        /// 商品描述
+        let goodsDesc: String
+        let goodsId: Int
+        /// 商品主图
+        let goodsImageUrl: String
+        /// 商品特殊标签列表。例: [1]，1-APP专享
+        let goodsLabels: [Int]?
+        /// 商品名称
+        let goodsName: String
+        /// 商品等级
+        let goodsRate: Int
+        /// 商品goodsSign，支持通过goodsSign查询商品。goodsSign是加密后的goodsId, goodsId已下线，请使用goodsSign来替代。使用说明：https://jinbao.pinduoduo.com/qa-system?questionId=252
+        let goodsSign: String
+        /// 商品缩略图
+        let goodsThumbnailUrl: String
+        /// 商品类型
+        let goodsType: Int?
+        /// 商品是否带券,true-带券,false-不带券
+        let hasCoupon: Bool
+        /// 商品是否有素材(图文、视频)
+        let hasMaterial: Bool
+        /// 物流分
+        let lgstTxt: String
+        /// 商家id
+        let mallId: Int
+        /// 店铺名称
+        let mallName: String
+        /// 市场服务费
+        let marketFee: Int
+        /// 商家类型
+        let merchantType: String
+        /// 最小成团价格，单位分
+        let minGroupPrice: Int
+        /// 最小单买价格，单位分
+        let minNormalPrice: Int
+        /// 商品标签类目ID,使用pdd.goods.opt.get获取
+        let optId: String
+        /// 商品一~四级标签类目ID列表
+        let optIds: [Int]
+        /// 商品标签名
+        let optName: String
+        /// 比价行为预判定佣金，需要用户备案
+        let predictPromotionRate: Int
+        /// 佣金比例,千分比
+        let promotionRate: Int
+        /// 二维码主图
+        let qrCodeImageUrl: String?
+        /// 商品近1小时在多多进宝的实时销量（仅实时热销榜提供）
+        let realtimeSalesTip: String?
+        /// 销售量
+        let salesTip: String
+        /// 搜索id，建议生成推广链接时候填写，提高收益。
+        let searchId: String
+        /// 服务分
+        let servTxt: String
+        /// 分享描述
+        let shareDesc: String?
+        /// 招商分成服务费比例，千分比
+        let shareRate: Int
+        /// 优势渠道专属商品补贴金额，单位为分。针对优质渠道的补贴活动，指定优势渠道可通过推广该商品获取相应补贴。补贴活动入口：[进宝网站-官方活动]
+        let subsidyAmount: Int?
+        /// 官方活动给渠道的收入补贴金额，不允许直接给下级代理展示，单位为分
+        let subsidyDuoAmountTenMillion: Int?
+        /// 优惠标签列表，包括："X元券","比全网低X元","服务费","精选素材","近30天低价","同款低价","同款好评","同款热销","旗舰店","一降到底","招商优选","商家优选","好价再降X元","全站销量XX","实时热销榜第X名","实时好评榜第X名","额外补X元"等
+        let unifiedTags: [String?]
+    }
+
+    let list: [Goods]
+    let listId: String
+    let searchId: String
+    let total: Int
+
+    var goodsList: [Goods] {
+        list
+    }
 }

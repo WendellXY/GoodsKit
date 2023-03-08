@@ -176,6 +176,7 @@ extension PDDService {
     ///   - sortType: The type of sorting to use.
     ///
     /// - Returns: A list of goods from the server.
+    @available(*, deprecated, message: "Use fetch(_:) instead")
     private func fetchGoods(
         keywords: String? = nil, listId: String? = nil,
         catId: Int? = nil, optId: Int? = nil,
@@ -197,7 +198,7 @@ extension PDDService {
 
         let data = try await performHTTPRequest(request)
 
-        return try Goods.decodeGoodsFrom(data)
+        return try Goods.decode(responseType: .search, from: data)
     }
 
     private func _fetch(task: GoodsFetchTask) async throws -> ([Goods], String) {
@@ -208,7 +209,7 @@ extension PDDService {
 
         let data = try await performHTTPRequest(request)
 
-        return try Goods.decodeGoodsFrom(data)
+        return try Goods.decode(responseType: .search, from: data)
     }
 
     public func fetch(_ task: GoodsFetchTask) async throws -> [Goods] {
