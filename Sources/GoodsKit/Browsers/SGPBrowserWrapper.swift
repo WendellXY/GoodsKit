@@ -137,11 +137,11 @@ extension SGPBrowserWrapper {
             }
         }
 
-        guard !skuList.isEmpty else { return }
+        guard skuList.isEmpty else { return }
 
         consolePrint("Parsing SKUs")
 
-        guard skuCategoriesCount > 0 else { return try await parseSKU() }
+        guard skuCategoriesCount > 1 else { return try await parseSKU() }
 
         // select one of the sku of the first category
         consolePrint("Found multiple levels of SKU")
@@ -168,7 +168,8 @@ extension SGPBrowserWrapper {
     ///
     /// - Returns: parsed comments tag
     func parseCommentsTag(from webView: WKWebView, tagList: inout Set<GoodsCommentsTag>, isForceParse: Bool, counter: Int, html: String) async throws {
-        consolePrint("Parsing Comments")
+        guard tagList.isEmpty else { return }
+
         if isForceParse, let tagListHTML = try? await webView.evaluate("document.getElementsByClassName('e_o0GHaH')[0].innerHTML") as? String {
             consolePrint("Parsing Comments by forceParsing pattern")
             tagListHTML.matches(of: rawDataPatternForceParsing).map(\.output)
@@ -185,6 +186,7 @@ extension SGPBrowserWrapper {
                 .map { GoodsCommentsTag(name: $0.1, num: $0.2, positive: 1) }
                 .forEach { tagList.insert($0) }
         }
+        consolePrint("DONE")
     }
 
     func parseFromWebView(_ webView: WKWebView, forceParse: Bool = false) async throws {
@@ -213,7 +215,7 @@ extension SGPBrowserWrapper {
         var skuList: [String: Double] = [:]
         var tagList: Set<GoodsCommentsTag> = []
 
-        while counter < Self.maxRepeatedTimes {
+        while counter < Self.maxRepeatedTimes && (tagList.isEmpty || skuList.isEmpty) {
             consolePrint("Parsing SKU & Comment Tag, loop \(counter)")
             counter += 1
 
@@ -233,8 +235,6 @@ extension SGPBrowserWrapper {
 
             try await parseSKUList(from: webView, skuList: &skuList, nodeTableJS: nodeTable, skuCategoriesCount: skuCategoryAmount)
             try await parseCommentsTag(from: webView, tagList: &tagList, isForceParse: forceParse, counter: counter, html: html)
-
-            if tagList.isEmpty || skuList.isEmpty { continue }
         }
 
         goodsDataSet.insert(GoodsDetailData(id: goodsID, tagList: Array(tagList), skuList: skuList))

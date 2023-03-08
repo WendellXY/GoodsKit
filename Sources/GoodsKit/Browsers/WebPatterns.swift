@@ -17,7 +17,7 @@ let rawDataPattern = Regex {
 }
 
 let rawDataPatternAlternative = Regex {
-    #/<li class="_2kK8WYHF.*">/#
+    #/<li class="_2kK8WYHF.*?">/#
     Capture {
         OneOrMore(.word)
     } transform: { match in
