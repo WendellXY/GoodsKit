@@ -27,7 +27,7 @@ extension GoodsKitCLI {
         var optId: Int?
 
         @Option(name: [.short, .long], help: "Number of Goods Pages to Fetch")
-        var pages: Int = 10
+        var pages: Int = 1
 
         @Option(name: [.customLong("size"), .long], help: "Number of Goods Per Page to Fetch")
         var pageSize: Int = 100
