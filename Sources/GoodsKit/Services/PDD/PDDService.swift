@@ -234,10 +234,15 @@ extension PDDService {
 
         for pageIndex in 1...task.pageCount {
             printProgress(pageIndex)
-            task.page = pageIndex
-            guard let (pageGoods, newListId) = try? await _fetch(task: task) else { break }
-            goods.append(contentsOf: pageGoods)
-            task.listId = newListId
+            do {
+                task.page = pageIndex
+                let (pageGoods, newListId) = try await _fetch(task: task)
+                goods.append(contentsOf: pageGoods)
+                task.listId = newListId
+            } catch {
+                print("\nError: \(error)")
+                break
+            }
         }
 
         return goods
