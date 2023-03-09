@@ -64,9 +64,7 @@ extension GoodsKitCLI {
             try data.write(to: options.savingDirectoryURL.appending(component: "\(options.output).json"))
 
             // TO CSV
-            var csv = Goods.csvHeader + "\n"
-            csv.append(contentsOf: goods.map(\.csvRow).joined(separator: "\n"))
-            try csv.write(to: options.savingDirectoryURL.appending(component: "\(options.output).csv"), atomically: true, encoding: .utf8)
+            try goods.csv.write(to: options.savingDirectoryURL.appending(component: "\(options.output).csv"), atomically: true, encoding: .utf8)
         }
 
         func run() async throws {
