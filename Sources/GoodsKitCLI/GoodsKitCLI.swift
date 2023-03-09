@@ -24,8 +24,11 @@ struct GoodsKitCLI: AsyncParsableCommand {
         ]
     )
 
-    @Flag(name: [.customLong("init"), .short], help: "Initialize Basic Environment")
+    @Flag(name: [.customLong("init")], help: "Initialize Basic Environment")
     var initialize = false
+
+    @Flag(name: [.customLong("check")], help: "Check If Configuration is Valid")
+    var checkConfig = false
 
     static func initializeEnvironment() throws {
         try FileManager.default.createDirectory(at: .configDirectory, withIntermediateDirectories: true, attributes: nil)
@@ -45,6 +48,14 @@ struct GoodsKitCLI: AsyncParsableCommand {
     mutating func run() async throws {
         if initialize {
             try Self.initializeEnvironment()
+        }
+
+        if checkConfig {
+            if try await PDDService.shared.isPidAuthorized() {
+                print("Configuration is valid.")
+            } else {
+                print("Pid is not authorized.")
+            }
         }
     }
 }
