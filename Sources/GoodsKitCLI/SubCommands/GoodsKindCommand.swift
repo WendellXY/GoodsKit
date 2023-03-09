@@ -9,7 +9,7 @@
 import ArgumentParser
 import GoodsKit
 
-enum GoodsKindType: String, ExpressibleByArgument {
+enum GoodsKindType: String, ExpressibleByArgument, CaseIterable {
     case cat
     case opt
 }
