@@ -87,9 +87,7 @@ extension SGPBrowserWrapper {
     func saveData() {
         do {
             let data = try JSONEncoder().encode(goodsDataSet)
-            let docDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-
-            try data.write(to: docDirectory.appending(component: "goods.data.json"))
+            try data.write(to: SGPBrowsersConfiguration.productURL.appending(component: "goods.data.json"))
         } catch {
             print(error)
         }

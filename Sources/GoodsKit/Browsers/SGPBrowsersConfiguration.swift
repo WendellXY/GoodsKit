@@ -11,5 +11,6 @@ import Foundation
 public struct SGPBrowsersConfiguration {
     public static var goodsKinds: [String] = []
     public static var goodsList: [[GoodsData]] = []
-    public static var maxRepeatedTimes: Int = 3
+    public static var maxRepeatedTimes = 3
+    public static var productURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
 }
