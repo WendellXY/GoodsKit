@@ -191,7 +191,7 @@ extension SGPBrowserWrapper {
         var counter = 0
 
         guard isInComments || forceParse else {
-            while !isInComments && counter < Self.maxRepeatedTimes * 3 {
+            while !isInComments && counter < Self.maxRepeatedTimes {
                 consolePrint("Entering Comments Page, loop \(counter)")
                 counter += 1
                 do {
