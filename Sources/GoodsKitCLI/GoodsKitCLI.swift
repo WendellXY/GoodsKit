@@ -19,6 +19,7 @@ struct GoodsKitCLI: AsyncParsableCommand {
         version: "0.0.1",
         subcommands: [
             GoodsCommand.self,
+            GoodsKindCommand.self,
             GoodsDetailsCommand.self,
             PromotionCommand.self,
         ]
