@@ -201,7 +201,7 @@ extension PDDService {
         return try Goods.decode(responseType: .search, from: data)
     }
 
-    private func _fetch(task: GoodsFetchTask) async throws -> ([Goods], String) {
+    private func _fetch(_ task: GoodsFetchTask) async throws -> ([Goods], String) {
         let request = makeAPIRequest(type: "pdd.ddk.goods.search", queryItems: task.queryItems) {
             URLQueryItem(key: "custom_parameters", value: #"{"new":1}"#)
             URLQueryItem(key: "pid", value: config.pid)
@@ -237,7 +237,7 @@ extension PDDService {
             printProgress(pageIndex)
             do {
                 task.page = pageIndex
-                let (pageGoods, newListId) = try await _fetch(task: task)
+                let (pageGoods, newListId) = try await _fetch(task)
                 goods.append(contentsOf: pageGoods)
                 task.listId = newListId
             } catch {
