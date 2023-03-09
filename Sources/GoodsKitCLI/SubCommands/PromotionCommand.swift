@@ -9,22 +9,20 @@
 import ArgumentParser
 import GoodsKit
 
-extension GoodsKitCLI {
-    struct PromotionCommand: AsyncParsableCommand {
-        static var configuration = CommandConfiguration(
-            commandName: "promotion",
-            abstract: "Promotion Related Commands"
-        )
+struct PromotionCommand: AsyncParsableCommand {
+    static var configuration = CommandConfiguration(
+        commandName: "promotion",
+        abstract: "Promotion Related Commands"
+    )
 
-        @Option(name: .shortAndLong, help: "Regenerate promotion link")
-        var regenerateLink: String?
+    @Option(name: .shortAndLong, help: "Regenerate promotion link")
+    var regenerateLink: String?
 
-        func run() async throws {
-            if let regenerateLink {
-                let promotionURL = try await PDDService.shared.regeneratePromotionURL(sourceURL: regenerateLink)
+    func run() async throws {
+        if let regenerateLink {
+            let promotionURL = try await PDDService.shared.regeneratePromotionURL(sourceURL: regenerateLink)
 
-                print(promotionURL)
-            }
+            print(promotionURL)
         }
     }
 }

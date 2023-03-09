@@ -14,28 +14,26 @@ enum GoodsKindType: String, ExpressibleByArgument {
     case opt
 }
 
-extension GoodsKitCLI {
-    struct GoodsKindCommand: AsyncParsableCommand {
-        static var configuration = CommandConfiguration(
-            commandName: "kind",
-            abstract: "Goods Kind (like catID & optID) Related Commands"
-        )
+struct GoodsKindCommand: AsyncParsableCommand {
+    static var configuration = CommandConfiguration(
+        commandName: "kind",
+        abstract: "Goods Kind (like catID & optID) Related Commands"
+    )
 
-        @Argument(help: "Type of Goods Kind to Fetch")
-        var type: GoodsKindType
+    @Argument(help: "Type of Goods Kind to Fetch")
+    var type: GoodsKindType
 
-        @Argument(help: "Parent ID of Current Kind Node")
-        var parentId: Int = 0
+    @Argument(help: "Parent ID of Current Kind Node")
+    var parentId: Int = 0
 
-        func run() async throws {
-            switch type {
-            case .cat:
-                let cats = try await PDDService.shared.fetchGoodsCategories(parentCatId: parentId)
-                print(cats.map(\.description).joined(separator: "\n"))
-            case .opt:
-                let opts = try await PDDService.shared.fetchGoodsOpt(parentOptId: parentId)
-                print(opts.map(\.description).joined(separator: "\n"))
-            }
+    func run() async throws {
+        switch type {
+        case .cat:
+            let cats = try await PDDService.shared.fetchGoodsCategories(parentCatId: parentId)
+            print(cats.map(\.description).joined(separator: "\n"))
+        case .opt:
+            let opts = try await PDDService.shared.fetchGoodsOpt(parentOptId: parentId)
+            print(opts.map(\.description).joined(separator: "\n"))
         }
     }
 }
