@@ -102,14 +102,16 @@ public struct Goods: Codable, CSVEncodable {
 
         do {
             response = try decoder.decodeFirstProperty(T.self, from: data)
-        } catch DecodingError.keyNotFound {
+        } catch let DecodingError.keyNotFound(key, context) {
+            print("Key '\(key)' not found:", context.debugDescription)
             let result = try decoder.decodeFirstProperty(ErrorResponse.self, from: data)
             throw APIError.errorResponse(result)
         } catch {
+            print(error)
             throw error
         }
 
-        return (response.goodsList.map { Goods(from: $0) }, response.listId)
+        return (response.goodsList.map { Goods(from: $0) }, response.listId ?? "")
     }
 
     public var toData: GoodsData {
@@ -164,7 +166,7 @@ public protocol RawGoods: Codable {
 public protocol GoodsResponse: Codable {
     associatedtype Goods: RawGoods
     var goodsList: [Goods] { get }
-    var listId: String { get }
+    var listId: String? { get }
     var searchId: String { get }
 }
 
@@ -305,7 +307,7 @@ private struct RawGoodsSearchResponse: GoodsResponse {
     }
 
     let goodsList: [Goods]
-    let listId: String
+    let listId: String?
     let searchId: String
     let totalCount: Int
 }
@@ -323,8 +325,6 @@ private struct RawGoodsRecommendResponse: GoodsResponse {
         /// 全局礼金金额，单位分
         let cashGiftAmount: Int?
         let categoryName: String
-        /// 商品类目id
-        let catId: String
         /// 商品一~四级类目ID列表
         let catIds: [Int]
         /// 优惠券面额,单位为分
@@ -357,7 +357,7 @@ private struct RawGoodsRecommendResponse: GoodsResponse {
         /// 商品名称
         let goodsName: String
         /// 商品等级
-        let goodsRate: Int
+        let goodsRate: Int?
         /// 商品goodsSign，支持通过goodsSign查询商品。goodsSign是加密后的goodsId, goodsId已下线，请使用goodsSign来替代。使用说明：https://jinbao.pinduoduo.com/qa-system?questionId=252
         let goodsSign: String
         /// 商品缩略图
@@ -415,7 +415,7 @@ private struct RawGoodsRecommendResponse: GoodsResponse {
     }
 
     let list: [Goods]
-    let listId: String
+    let listId: String?
     let searchId: String
     let total: Int
 
