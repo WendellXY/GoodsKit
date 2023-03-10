@@ -201,18 +201,28 @@ extension PDDService {
         return try Goods.decode(responseType: .search, from: data)
     }
 
-    private func _fetch(_ task: GoodsFetchTask) async throws -> ([Goods], String) {
-        let request = makeAPIRequest(type: "pdd.ddk.goods.search", queryItems: task.queryItems) {
+    private func fetchSinglePage(with task: some PagedFetchTask) async throws -> ([Goods], String) {
+
+        let type: String
+
+        switch task.type {
+        case .search:
+            type = "pdd.ddk.goods.search"
+        case .recommend:
+            type = "pdd.ddk.goods.recommend.get"
+        }
+
+        let request = makeAPIRequest(type: type, queryItems: task.queryItems) {
             URLQueryItem(key: "custom_parameters", value: #"{"new":1}"#)
             URLQueryItem(key: "pid", value: config.pid)
         }
 
         let data = try await performHTTPRequest(request)
 
-        return try Goods.decode(responseType: .search, from: data)
+        return try Goods.decode(responseType: task.type, from: data)
     }
 
-    public func fetch(_ task: GoodsFetchTask) async throws -> [Goods] {
+    public func fetch(_ task: some PagedFetchTask) async throws -> [Goods] {
 
         func printProgress(_ page: Int) {
             print("\r[\(page)/\(task.pageCount)] Fetching Goods List", terminator: "")
@@ -226,9 +236,7 @@ extension PDDService {
             print(String(format: "\nFetch Completed! (%.2fs)", startTime.distance(to: Date.now)))
         }
 
-        let pageCount = task.page
-
-        guard pageCount > 0 else { return [] }
+        guard task.pageCount > 0 else { return [] }
 
         var goods: [Goods] = []
         var task = task
@@ -236,10 +244,10 @@ extension PDDService {
         for pageIndex in 1...task.pageCount {
             printProgress(pageIndex)
             do {
-                task.page = pageIndex
-                let (pageGoods, newListId) = try await _fetch(task)
+                let (pageGoods, newListId) = try await fetchSinglePage(with: task)
                 goods.append(contentsOf: pageGoods)
                 task.listId = newListId
+                task.currentPage = pageIndex + 1
             } catch {
                 print("\nError: \(error)")
                 break
