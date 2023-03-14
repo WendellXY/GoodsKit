@@ -55,6 +55,40 @@ public struct Goods: Codable, CSVEncodable {
         return items.joined(separator: ",")
     }
 
+    public init(
+        id: Int = 0,
+        price: Double = 0,
+        brandName: String? = nil,
+        categoryName: String = "",
+        categoryId: [Int] = [],
+        imageURL: URL? = nil,
+        coupon: Coupon = Coupon(),
+        name: String = "",
+        sign: String = "",
+        desc: String = "",
+        hasCoupon: Bool = false,
+        mallName: String = "",
+        mallEvaluation: MallGeneralEvaluation = MallGeneralEvaluation(),
+        promotionRate: Double = 0,
+        salesAmount: Int = 0
+    ) {
+        self.id = id
+        self.price = price
+        self.brandName = brandName
+        self.categoryName = categoryName
+        self.categoryId = categoryId
+        self.imageURL = imageURL
+        self.coupon = coupon
+        self.name = name
+        self.sign = sign
+        self.desc = desc
+        self.hasCoupon = hasCoupon
+        self.mallName = mallName
+        self.mallEvaluation = mallEvaluation
+        self.promotionRate = promotionRate
+        self.salesAmount = salesAmount
+    }
+
     private init(from rawData: some RawGoods) {
         self.id = rawData.goodsId
         self.price = Double(min(rawData.minNormalPrice, rawData.minGroupPrice)) / 100

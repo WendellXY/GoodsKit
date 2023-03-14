@@ -22,4 +22,10 @@ public struct MallGeneralEvaluation: Codable {
         self.serviceAttitude = Level(rawValue: attitude) ?? .low
         self.descriptionMatches = Level(rawValue: matches) ?? .low
     }
+
+    public init(logisticsSpeed: Level = .high, serviceAttitude: Level = .high, descriptionMatches: Level = .high) {
+        self.logisticsSpeed = logisticsSpeed
+        self.serviceAttitude = serviceAttitude
+        self.descriptionMatches = descriptionMatches
+    }
 }
