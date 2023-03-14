@@ -19,6 +19,8 @@ public struct Goods: Codable, CSVEncodable {
     public let categoryName: String
     public let categoryId: [Int]
 
+    public let imageURL: URL?
+
     public let coupon: Coupon
 
     public let name: String
@@ -59,6 +61,7 @@ public struct Goods: Codable, CSVEncodable {
         self.brandName = rawData.brandName
         self.categoryName = rawData.categoryName
         self.categoryId = rawData.catIds
+        self.imageURL = URL(string: rawData.goodsImageUrl)
         self.coupon = Coupon(
             discount: rawData.couponDiscount / 100,
             startTime: Date(timeIntervalSince1970: TimeInterval(rawData.couponStartTime)),
@@ -130,6 +133,8 @@ public protocol RawGoods: Codable {
 
     var categoryName: String { get }
     var catIds: [Int] { get }
+
+    var goodsImageUrl: String { get }
 
     var brandName: String? { get }
 
